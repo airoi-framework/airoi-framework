@@ -1,0 +1,930 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ambition Calibration — AIROI Instrument</title>
+<style>
+  :root {
+    --ink: #1c1917; --muted: #78716c; --line: #e7e5e4; --paper: #fafaf9; --card: #ffffff;
+    --accent: #4f46e5; --accent-soft: #eef2ff; --accent-deep: #3730a3;
+    --sustain: #0ea5e9; --scale: #8b5cf6; --shift: #f43f5e;
+    --ok: #059669; --warn: #d97706; --crit: #dc2626;
+    --grade-a: #166534; --grade-b: #1d4ed8; --grade-c: #b45309; --grade-x: #57534e;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body { background: var(--paper); color: var(--ink); font-family: "Segoe UI", system-ui, sans-serif; line-height: 1.55; }
+
+  /* ── top bar ── */
+  .topbar { position: sticky; top: 0; z-index: 50; background: var(--card); border-bottom: 1px solid var(--line); padding: 10px 22px; display: flex; align-items: center; gap: 14px; }
+  .topbar .brand { font-weight: 700; color: var(--accent-deep); font-size: 1rem; }
+  .topbar .brand small { display: block; font-weight: 400; color: var(--muted); font-size: 0.72rem; }
+  .topbar .spacer { flex: 1; }
+  .mode-pill { display: flex; border: 1px solid var(--line); border-radius: 999px; overflow: hidden; font-size: 0.78rem; }
+  .mode-pill button { border: none; background: transparent; padding: 6px 14px; cursor: pointer; color: var(--muted); font-weight: 600; }
+  .mode-pill button.on { background: var(--accent); color: #fff; }
+  .tb-btn { border: 1px solid var(--line); background: var(--card); border-radius: 8px; padding: 6px 12px; cursor: pointer; font-size: 0.8rem; font-weight: 600; color: var(--ink); }
+  .tb-btn:hover { border-color: var(--accent); }
+
+  /* ── layout: rail + content ── */
+  .wrap { display: grid; grid-template-columns: 220px 1fr; max-width: 1180px; margin: 0 auto; gap: 28px; padding: 26px 22px 120px; }
+  nav.rail { position: sticky; top: 66px; align-self: start; display: flex; flex-direction: column; gap: 2px; }
+  nav.rail a { text-decoration: none; color: var(--muted); font-size: 0.84rem; padding: 7px 12px; border-left: 3px solid transparent; border-radius: 0 8px 8px 0; }
+  nav.rail a:hover { color: var(--ink); background: var(--accent-soft); }
+  nav.rail a.here { color: var(--accent-deep); border-left-color: var(--accent); background: var(--accent-soft); font-weight: 600; }
+
+  main { min-width: 0; }
+  section.block { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 26px 28px; margin-bottom: 22px; scroll-margin-top: 78px; }
+  section.block > h2 { font-size: 1.15rem; margin-bottom: 4px; color: var(--accent-deep); }
+  section.block > p.lead { color: var(--muted); font-size: 0.88rem; margin-bottom: 18px; }
+
+  .q { margin-bottom: 22px; }
+  .q > label.head { display: block; font-weight: 600; font-size: 0.95rem; margin-bottom: 8px; }
+  .code-chip { font-family: ui-monospace, monospace; font-size: 0.68rem; background: var(--accent-soft); color: var(--accent-deep); border-radius: 4px; padding: 1px 6px; margin-right: 7px; vertical-align: middle; }
+  .hint { font-size: 0.8rem; color: var(--muted); font-style: italic; margin: 4px 0 8px; }
+
+  input[type=text] { width: 100%; padding: 9px 12px; border: 1px solid var(--line); border-radius: 8px; font: inherit; background: var(--card); }
+  input[type=text]:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+  textarea { width: 100%; min-height: 74px; padding: 9px 12px; border: 1px solid var(--line); border-radius: 8px; font: inherit; resize: vertical; }
+  textarea:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+
+  /* options */
+  .opts { display: grid; grid-template-columns: repeat(auto-fill, minmax(215px, 1fr)); gap: 7px; }
+  .opt { border: 1.5px solid var(--line); border-radius: 9px; padding: 9px 12px; cursor: pointer; font-size: 0.86rem; background: var(--card); transition: 0.12s; }
+  .opt:hover { border-color: var(--accent); }
+  .opt.sel { border-color: var(--accent); background: var(--accent-soft); }
+  .opt b { display: block; font-size: 0.87rem; }
+  .opt span.d { color: var(--muted); font-size: 0.76rem; }
+  .opt.multi.sel { border-color: var(--ok); background: #ecfdf5; }
+
+  .scale-row { display: flex; gap: 7px; }
+  .scale-row button { flex: 1; border: 1.5px solid var(--line); background: var(--card); border-radius: 9px; padding: 11px 0; font-size: 1.05rem; font-weight: 600; color: var(--muted); cursor: pointer; }
+  .scale-row button:hover { border-color: var(--accent); }
+  .scale-row button.sel { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .scale-ends { display: flex; justify-content: space-between; font-size: 0.76rem; color: var(--muted); font-style: italic; margin-top: 4px; }
+
+  /* vector */
+  .vec { background: linear-gradient(160deg, #fafaf9, #f5f3ff); border: 1.5px solid var(--line); border-radius: 14px; padding: 22px; }
+  .vec-row { display: grid; grid-template-columns: 130px 1fr 56px; gap: 14px; align-items: center; margin-bottom: 14px; }
+  .vec-row label b { font-size: 0.95rem; }
+  .vec-row label small { display: block; color: var(--muted); font-size: 0.73rem; }
+  .vec-row output { font-size: 1.3rem; font-weight: 700; text-align: right; font-variant-numeric: tabular-nums; }
+  .vec-row.sustain output { color: var(--sustain); }
+  .vec-row.scale output { color: var(--scale); }
+  .vec-row.shift output { color: var(--shift); }
+  input[type=range] { width: 100%; height: 7px; -webkit-appearance: none; background: var(--line); border-radius: 4px; }
+  input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 22px; height: 22px; border-radius: 50%; border: 3px solid #fff; box-shadow: 0 1px 5px rgba(0,0,0,0.25); cursor: pointer; }
+  .vec-row.sustain input[type=range]::-webkit-slider-thumb { background: var(--sustain); }
+  .vec-row.scale input[type=range]::-webkit-slider-thumb { background: var(--scale); }
+  .vec-row.shift input[type=range]::-webkit-slider-thumb { background: var(--shift); }
+  .vec-bar { display: flex; height: 30px; border-radius: 8px; overflow: hidden; margin-top: 8px; }
+  .vec-bar div { display: flex; align-items: center; justify-content: center; color: #fff; font-size: 0.78rem; font-weight: 600; transition: width 0.15s; min-width: 0; overflow: hidden; }
+  .vec-bar .b-sustain { background: var(--sustain); }
+  .vec-bar .b-scale { background: var(--scale); }
+  .vec-bar .b-shift { background: var(--shift); }
+  .vec-note { margin-top: 10px; font-size: 0.8rem; color: var(--ok); font-weight: 500; text-align: center; }
+
+  /* advisor-mode artifacts */
+  .prefill-note { display: none; margin-top: 7px; background: #fffbeb; border-left: 3px solid var(--warn); border-radius: 0 8px 8px 0; padding: 7px 11px; font-size: 0.8rem; color: #713f12; }
+  .prefill-note[contenteditable] { outline: none; }
+  .grade-chip { display: none; font-family: ui-monospace, monospace; font-weight: 700; font-size: 0.68rem; border-radius: 4px; padding: 1px 7px; margin-left: 7px; vertical-align: middle; color: #fff; }
+  .grade-chip.g-A { background: var(--grade-a); } .grade-chip.g-B { background: var(--grade-b); }
+  .grade-chip.g-C { background: var(--grade-c); } .grade-chip.g-X { background: var(--grade-x); }
+  body.advisor .prefill-note.filled { display: block; }
+  body.advisor .grade-chip.filled { display: inline-block; }
+  .margin-note { display: none; margin-top: 18px; border-top: 1px dashed var(--line); padding-top: 12px; }
+  .margin-note label { font-size: 0.78rem; font-weight: 700; color: var(--warn); display: block; margin-bottom: 5px; }
+  body.advisor .margin-note { display: block; }
+  .adv-banner { display: none; background: var(--accent-soft); border: 1px solid var(--accent); color: var(--accent-deep); border-radius: 10px; padding: 9px 14px; font-size: 0.82rem; margin-bottom: 18px; }
+  body.advisor .adv-banner { display: block; }
+
+  /* results */
+  .verdict { text-align: center; padding: 18px 0 8px; }
+  .verdict .headline { font-size: 1.7rem; font-weight: 800; color: var(--accent-deep); }
+  .flags { border-radius: 10px; padding: 14px 18px; margin: 16px 0; font-size: 0.87rem; }
+  .flags.some { background: #fffbeb; border-left: 4px solid var(--warn); }
+  .flags.none { background: #ecfdf5; border-left: 4px solid var(--ok); }
+  .flags ul { margin-left: 18px; }
+  .flags li { margin: 5px 0; }
+  .rf-id { font-family: ui-monospace, monospace; font-size: 0.72rem; background: var(--line); border-radius: 4px; padding: 0 5px; margin-right: 5px; }
+  .summary-list div { font-size: 0.85rem; margin: 4px 0; }
+  .summary-list .k { color: var(--muted); }
+  .actions { display: flex; gap: 9px; flex-wrap: wrap; margin-top: 16px; }
+  .actions button { border: 1px solid var(--line); background: var(--card); border-radius: 9px; padding: 9px 16px; cursor: pointer; font-weight: 600; font-size: 0.85rem; }
+  .actions button.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .actions button:hover { filter: brightness(0.96); }
+
+  footer.colophon { text-align: center; color: var(--muted); font-size: 0.75rem; padding: 30px 0 50px; }
+  footer.colophon a { color: var(--accent-deep); }
+
+  @media (max-width: 860px) { .wrap { grid-template-columns: 1fr; } nav.rail { display: none; } }
+  @media print { .topbar, nav.rail, .actions { display: none !important; } section.block { break-inside: avoid; border: none; } }
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="brand">AIROI · Ambition Calibration<small data-en="Alignment Session instrument · reference implementation" data-sk="Instrument pre Alignment Session · referenčná implementácia">…</small></div>
+  <div class="spacer"></div>
+  <div class="mode-pill" title="Spec 04 §6">
+    <button id="modeRespondent" class="on" data-en="Respondent" data-sk="Respondent">Respondent</button>
+    <button id="modeAdvisor" data-en="Advisor" data-sk="Poradca">Advisor</button>
+  </div>
+  <button class="tb-btn" id="importBtn" data-en="⤓ Import pack" data-sk="⤓ Import pack">…</button>
+  <input type="file" id="importFile" accept=".json" style="display:none">
+  <button class="tb-btn" id="langBtn">SK</button>
+  <button class="tb-btn" id="resetBtn" data-en="Reset" data-sk="Reset">…</button>
+</header>
+
+<div class="wrap">
+<nav class="rail" id="rail">
+  <a href="#s-context" data-en="1 · Context" data-sk="1 · Kontext">…</a>
+  <a href="#s-strategy" data-en="2 · Strategy" data-sk="2 · Stratégia">…</a>
+  <a href="#s-environment" data-en="3 · Environment" data-sk="3 · Prostredie">…</a>
+  <a href="#s-vector" data-en="4 · Ambition Vector ★" data-sk="4 · Ambition Vector ★">…</a>
+  <a href="#s-posture" data-en="5 · Posture" data-sk="5 · Postoj">…</a>
+  <a href="#s-momentum" data-en="6 · Leadership" data-sk="6 · Leadership">…</a>
+  <a href="#s-capability" data-en="7 · Capability" data-sk="7 · Schopnosti">…</a>
+  <a href="#s-value" data-en="8 · Value focus" data-sk="8 · Hodnota">…</a>
+  <a href="#s-vision" data-en="9 · Success" data-sk="9 · Úspech">…</a>
+  <a href="#s-results" data-en="10 · Results" data-sk="10 · Výsledky">…</a>
+</nav>
+
+<main>
+<div class="adv-banner" data-en="🔎 Advisor mode — evidence grades, rationale callouts and margin notes are visible. Never project this mode to the room (Principle P5)." data-sk="🔎 Advisor mód — evidence grades, rationale a margin notes sú viditeľné. Nikdy nepremietať do miestnosti (Princíp P5).">…</div>
+
+<!-- ═══ 1 · CONTEXT ═══ -->
+<section class="block" id="s-context">
+  <h2 data-en="1 · Context" data-sk="1 · Kontext">…</h2>
+  <p class="lead" data-en="Session metadata and organization profile." data-sk="Metadáta session a profil organizácie.">…</p>
+
+  <div class="q" data-field="ORG_NAME" data-type="text">
+    <label class="head"><span class="code-chip">ORG_NAME</span><span data-en="Organization" data-sk="Organizácia">…</span><span class="grade-chip"></span></label>
+    <input type="text"><div class="prefill-note" contenteditable="true"></div>
+  </div>
+  <div class="q" data-field="SESSION_DATE" data-type="text">
+    <label class="head"><span class="code-chip">SESSION_DATE</span><span data-en="Session date" data-sk="Dátum session">…</span><span class="grade-chip"></span></label>
+    <input type="text" placeholder="YYYY-MM-DD"><div class="prefill-note" contenteditable="true"></div>
+  </div>
+  <div class="q" data-field="PARTICIPANTS" data-type="text">
+    <label class="head"><span class="code-chip">PARTICIPANTS</span><span data-en="Participants (names + roles)" data-sk="Účastníci (mená + roly)">…</span><span class="grade-chip"></span></label>
+    <input type="text"><div class="prefill-note" contenteditable="true"></div>
+  </div>
+  <div class="q" data-field="HORIZON" data-type="single">
+    <label class="head"><span class="code-chip">HORIZON</span><span data-en="Calibration horizon" data-sk="Horizont kalibrácie">…</span><span class="grade-chip"></span></label>
+    <div class="opts">
+      <div class="opt" data-v="6m"><b data-en="6 months" data-sk="6 mesiacov">…</b><span class="d" data-en="dynamic environment" data-sk="dynamické prostredie">…</span></div>
+      <div class="opt" data-v="12m"><b data-en="12 months" data-sk="12 mesiacov">…</b><span class="d" data-en="standard planning cycle" data-sk="štandardný plánovací cyklus">…</span></div>
+    </div>
+    <div class="prefill-note" contenteditable="true"></div>
+  </div>
+  <div class="q" data-field="SECTOR" data-type="multi">
+    <label class="head"><span class="code-chip">SECTOR</span><span data-en="Sector" data-sk="Sektor">…</span><span class="grade-chip"></span></label>
+    <div class="opts">
+      <div class="opt multi" data-v="banking"><b data-en="Banking / fintech" data-sk="Bankovníctvo / fintech">…</b></div>
+      <div class="opt multi" data-v="insurance"><b data-en="Insurance" data-sk="Poisťovníctvo">…</b></div>
+      <div class="opt multi" data-v="tech"><b data-en="Tech / software / IT services" data-sk="Tech / softvér / IT služby">…</b></div>
+      <div class="opt multi" data-v="retail"><b data-en="Retail / e-commerce" data-sk="Retail / e-commerce">…</b></div>
+      <div class="opt multi" data-v="manufacturing"><b data-en="Manufacturing" data-sk="Výroba">…</b></div>
+      <div class="opt multi" data-v="services"><b data-en="Professional services" data-sk="Profesionálne služby">…</b></div>
+      <div class="opt multi" data-v="public"><b data-en="Public sector" data-sk="Verejný sektor">…</b></div>
+      <div class="opt multi" data-v="health"><b data-en="Healthcare / pharma" data-sk="Zdravotníctvo / pharma">…</b></div>
+      <div class="opt multi" data-v="energy"><b data-en="Energy / utilities" data-sk="Energetika / utility">…</b></div>
+      <div class="opt multi" data-v="logistics"><b data-en="Logistics / transport" data-sk="Logistika / doprava">…</b></div>
+      <div class="opt multi" data-v="telco"><b data-en="Telco / media" data-sk="Telco / médiá">…</b></div>
+      <div class="opt multi" data-v="other"><b data-en="Other" data-sk="Iné">…</b></div>
+    </div>
+    <div class="prefill-note" contenteditable="true"></div>
+  </div>
+  <div class="q" data-field="ORG_SIZE" data-type="single">
+    <label class="head"><span class="code-chip">ORG_SIZE</span><span data-en="Size (employees)" data-sk="Veľkosť (zamestnanci)">…</span><span class="grade-chip"></span></label>
+    <div class="opts">
+      <div class="opt" data-v="lt50"><b>&lt; 50</b></div>
+      <div class="opt" data-v="50-250"><b>50–250</b></div>
+      <div class="opt" data-v="250-1000"><b>250–1 000</b></div>
+      <div class="opt" data-v="1000-5000"><b>1 000–5 000</b></div>
+      <div class="opt" data-v="gt5000"><b>&gt; 5 000</b></div>
+      <div class="opt" data-v="unknown"><b data-en="Unknown" data-sk="Neznáme">…</b></div>
+    </div>
+    <div class="prefill-note" contenteditable="true"></div>
+  </div>
+  <div class="q" data-field="GEOGRAPHY" data-type="single">
+    <label class="head"><span class="code-chip">GEOGRAPHY</span><span data-en="Geography of operations" data-sk="Geografia pôsobenia">…</span><span class="grade-chip"></span></label>
+    <div class="opts">
+      <div class="opt" data-v="domestic"><b data-en="Domestic" data-sk="Domáci trh">…</b></div>
+      <div class="opt" data-v="regional"><b data-en="Regional" data-sk="Regionálne">…</b></div>
+      <div class="opt" data-v="continental"><b data-en="Continental" data-sk="Kontinentálne">…</b></div>
+      <div class="opt" data-v="global"><b data-en="Global" data-sk="Globálne">…</b></div>
+    </div>
+    <div class="prefill-note" contenteditable="true"></div>
+  </div>
+  <div class="margin-note" data-note="1"><label data-en="Margin note — section 1" data-sk="Margin note — sekcia 1">…</label><textarea></textarea></div>
+</section>
+
+<!-- ═══ 2 · STRATEGY ═══ -->
+<section class="block" id="s-strategy">
+  <h2 data-en="2 · Strategic direction" data-sk="2 · Strategický smer">…</h2>
+  <p class="lead" data-en="Where the organization is heading, at strategy level." data-sk="Kam organizácia smeruje na úrovni stratégie.">…</p>
+
+  <div class="q" data-field="STRAT_DIRECTION" data-type="single">
+    <label class="head"><span class="code-chip">STRAT_DIRECTION</span><span data-en="Primary strategic direction in the current period" data-sk="Hlavný strategický smer v aktuálnom období">…</span><span class="grade-chip"></span></label>
+    <div class="opts">
+      <div class="opt" data-v="organic"><b data-en="Organic growth" data-sk="Organický rast">…</b><span class="d" data-en="developing the existing business" data-sk="rozvoj existujúceho biznisu">…</span></div>
+      <div class="opt" data-v="expansion"><b data-en="Market expansion" data-sk="Trhová expanzia">…</b><span class="d" data-en="new geographies / segments" data-sk="nové geografie / segmenty">…</span></div>
+      <div class="opt" data-v="excellence"><b data-en="Operational excellence" data-sk="Operatívna excelencia">…</b><span class="d" data-en="quality, cost, reliability" data-sk="kvalita, náklady, spoľahlivosť">…</span></div>
+      <div class="opt" data-v="consolidation"><b data-en="Consolidation & integration" data-sk="Konsolidácia a integrácia">…</b></div>
+      <div class="opt" data-v="pivot"><b data-en="Strategic pivot" data-sk="Strategický pivot">…</b><span class="d" data-en="reshaping model / product" data-sk="prerod modelu / produktu">…</span></div>
+      <div class="opt" data-v="position"><b data-en="Strengthening position" data-sk="Posilnenie pozície">…</b></div>
+      <div class="opt" data-v="innovation"><b data-en="Innovation & R&D" data-sk="Inovácia a R&D">…</b></div>
+      <div class="opt" data-v="stabilization"><b data-en="Stabilization & preparation" data-sk="Stabilizácia a príprava">…</b></div>
+    </div>
+    <div class="prefill-note" contenteditable="true"></div>
+  </div>
+  <div class="q" data-field="PRIORITIES" data-type="multi">
+    <label class="head"><span class="code-chip">PRIORITIES</span><span data-en="Top business priorities for the horizon (pick 3–5)" data-sk="TOP biznis priority na horizont (3–5)">…</span><span class="grade-chip"></span></label>
+    <div class="opts">
+      <div class="opt multi" data-v="revenue"><b data-en="Revenue growth" data-sk="Rast obratu">…</b></div>
+      <div class="opt multi" data-v="cost"><b data-en="Cost optimization" data-sk="Optimalizácia nákladov">…</b></div>
+      <div class="opt multi" data-v="retention"><b data-en="Customer retention" data-sk="Retencia zákazníkov">…</b></div>
+      <div class="opt multi" data-v="acquisition"><b data-en="New customer acquisition" data-sk="Akvizícia zákazníkov">…</b></div>
+      <div class="opt multi" data-v="new_products"><b data-en="New products / services" data-sk="Nové produkty / služby">…</b></div>
+      <div class="opt multi" data-v="digital"><b data-en="Digital transformation" data-sk="Digitálna transformácia">…</b></div>
+      <div class="opt multi" data-v="talent"><b data-en="Talent & culture" data-sk="Talent a kultúra">…</b></div>
+      <div class="opt multi" data-v="compliance"><b data-en="Compliance & risk" data-sk="Compliance a risk">…</b></div>
+      <div class="opt multi" data-v="expansion"><b data-en="Market / geographic expansion" data-sk="Trhová / geografická expanzia">…</b></div>
+      <div class="opt multi" data-v="quality"><b data-en="Quality & reliability" data-sk="Kvalita a spoľahlivosť">…</b></div>
+      <div class="opt multi" data-v="efficiency"><b data-en="Operational efficiency" data-sk="Operatívna efektivita">…</b></div>
+      <div class="opt multi" data-v="innovation"><b data-en="Innovation / R&D" data-sk="Inovácia / R&D">…</b></div>
+    </div>
+    <div class="prefill-note" contenteditable="true"></div>
+  </div>
+  <div class="q" data-field="MARKET_POSITION" data-type="single">
+    <label class="head"><span class="code-chip">MARKET_POSITION</span><span data-en="Market position" data-sk="Pozícia na trhu">…</span><span class="grade-chip"></span></label>
+    <div class="opts">
+      <div class="opt" data-v="leader"><b data-en="Leader" data-sk="Líder">…</b></div>
+      <div class="opt" data-v="fast_follower"><b data-en="Fast follower" data-sk="Rýchly nasledovník">…</b></div>
+      <div class="opt" data-v="challenger"><b data-en="Challenger" data-sk="Vyzývateľ">…</b></div>
+      <div class="opt" data-v="niche"><b data-en="Niche player" data-sk="Niche hráč">…</b></div>
+      <div class="opt" data-v="entering"><b data-en="Entering" data-sk="Vstupujúci">…</b></div>
+      <div class="opt" data-v="rebuilding"><b data-en="Rebuilding position" data-sk="Posilňovanie pozície">…</b></div>
+    </div>
+    <div class="prefill-note" contenteditable="true"></div>
+  </div>
+  <div class="q" data-field="DECISION_HORIZON" data-type="single">
+    <label class="head"><span class="code-chip">DECISION_HORIZON</span><span data-en="Typical horizon of strategic decisions" data-sk="Typický horizont strategických rozhodnutí">…</span><span class="grade-chip"></span></label>
+    <div class="opts">
+      <div class="opt" data-v="months"><b data-en="Months" data-sk="Mesiace">…</b></div>
+      <div class="opt" data-v="1y"><b data-en="1 year" data-sk="1 rok">…</b></div>
+      <div class="opt" data-v="2-3y"><b data-en="2–3 years" data-sk="2–3 roky">…</b></div>
+      <div class="opt" data-v="5y"><b data-en="5+ years" data-sk="5+ rokov">…</b></div>
+    </div>
+    <div class="prefill-note" contenteditable="true"></div>
+  </div>
+  <div class="margin-note" data-note="2"><label data-en="Margin note — section 2" data-sk="Margin note — sekcia 2">…</label><textarea></textarea></div>
+</section>
+
+<!-- ═══ 3 · ENVIRONMENT ═══ -->
+<section class="block" id="s-environment">
+  <h2 data-en="3 · Environmental dynamics" data-sk="3 · Dynamika prostredia">…</h2>
+  <p class="lead" data-en="External forces shaping the strategic context." data-sk="Vonkajšie sily formujúce strategický kontext.">…</p>
+
+  <div class="q" data-field="COMPETITIVE_DYNAMICS" data-type="likert">
+    <label class="head"><span class="code-chip">COMPETITIVE_DYNAMICS</span><span data-en="Competitive dynamics in the sector (1–5)" data-sk="Konkurenčná dynamika v sektore (1–5)">…</span><span class="grade-chip"></span></label>
+    <div class="scale-row"><button data-v="1">1</button><button data-v="2">2</button><button data-v="3">3</button><button data-v="4">4</button><button data-v="5">5</button></div>
+    <div class="scale-ends"><span data-en="1 = stable market" data-sk="1 = stabilný trh">…</span><span data-en="5 = high dynamics, new entrants" data-sk="5 = vysoká dynamika, noví hráči">…</span></div>
+    <div class="prefill-note" contenteditable="true"></div>
+  </div>
+  <div class="q" data-field="REGULATORY_INTENSITY" data-type="likert">
+    <label class="head"><span class="code-chip">REGULATORY_INTENSITY</span><span data-en="Regulatory intensity (1–5)" data-sk="Regulačná intenzita (1–5)">…</span><span class="grade-chip"></span></label>
+    <div class="scale-row"><button data-v="1">1</button><button data-v="2">2</button><button data-v="3">3</button><button data-v="4">4</button><button data-v="5">5</button></div>
+    <div class="scale-ends"><span data-en="1 = stable" data-sk="1 = stabilné">…</span><span data-en="5 = actively evolving" data-sk="5 = aktívne sa vyvíja">…</span></div>
+    <div class="prefill-note" contenteditable="true"></div>
+  </div>
+  <div class="q" data-field="REGULATORY_FRAMES" data-type="multi">
+    <label class="head"><span class="code-chip">REGULATORY_FRAMES</span><span data-en="Applicable regulatory frames" data-sk="Aplikovateľné regulačné rámce">…</span><span class="grade-chip"></span></label>
+    <div class="opts">
+      <div class="opt multi" data-v="privacy"><b data-en="Privacy (e.g. GDPR)" data-sk="Ochrana údajov (napr. GDPR)">…</b></div>
+      <div class="opt multi" data-v="ai_regulation"><b data-en="AI regulation" data-sk="AI regulácia">…</b></div>
+      <div class="opt multi" data-v="cyber"><b data-en="Cybersecurity / resilience" data-sk="Kyberbezpečnosť / odolnosť">…</b></div>
+      <div class="opt multi" data-v="sectoral"><b data-en="Sectoral regimes" data-sk="Sektorové režimy">…</b></div>
+      <div class="opt multi" data-v="esg"><b data-en="ESG / sustainability" data-sk="ESG / udržateľnosť">…</b></div>
+      <div class="opt multi" data-v="contractual"><b data-en="International contractual" data-sk="Medzinárodné kontraktové">…</b></div>
+      <div class="opt multi" data-v="none"><b data-en="None significant" data-sk="Žiadne významné">…</b></div>
+    </div>
+    <div class="prefill-note" contenteditable="true"></div>
+  </div>
+  <div class="margin-note" data-note="3"><label data-en="Margin note — section 3" data-sk="Margin note — sekcia 3">…</label><textarea></textarea></div>
+</section>
+
+<!-- ═══ 4 · AMBITION VECTOR ═══ -->
+<section class="block" id="s-vector">
+  <h2 data-en="4 · Ambition Vector ★" data-sk="4 · Ambition Vector ★">…</h2>
+  <p class="lead" data-en="The session's key question: distribute 100 points across the three ambition axes for the chosen horizon. Sliders are linked — the sum always stays 100." data-sk="Kľúčová otázka session: rozdeľte 100 bodov medzi tri osi ambície pre zvolený horizont. Slidery sú prepojené — súčet je vždy 100.">…</p>
+
+  <div class="q" data-field="AMBITION_VECTOR" data-type="vector">
+    <div class="vec">
+      <div class="vec-row sustain">
+        <label><b>Sustain</b><small data-en="operate the current business well" data-sk="dobre prevádzkovať súčasný biznis">…</small></label>
+        <input type="range" min="0" max="100" value="33" data-axis="sustain">
+        <output>33</output>
+      </div>
+      <div class="vec-row scale">
+        <label><b>Scale</b><small data-en="grow and improve the existing" data-sk="rásť a zlepšovať existujúce">…</small></label>
+        <input type="range" min="0" max="100" value="34" data-axis="scale">
+        <output>34</output>
+      </div>
+      <div class="vec-row shift">
+        <label><b>Shift</b><small data-en="change the model" data-sk="zmeniť model">…</small></label>
+        <input type="range" min="0" max="100" value="33" data-axis="shift">
+        <output>33</output>
+      </div>
+      <div class="vec-bar"><div class="b-sustain" style="width:33%">33</div><div class="b-scale" style="width:34%">34</div><div class="b-shift" style="width:33%">33</div></div>
+      <div class="vec-note" data-en="Linked sliders — moving one redistributes the remainder equally. Sum = 100, no axis may rest at 0." data-sk="Prepojené slidery — pohyb jedného rozdelí zvyšok rovnomerne. Súčet = 100, žiadna os nemá byť 0.">…</div>
+      <div class="prefill-note" contenteditable="true"></div>
+    </div>
+    <p class="hint" data-en="Facilitation: let each participant commit a vector individually first (paper), then negotiate the shared one. Divergence is a finding — record it." data-sk="Facilitácia: nechajte každého účastníka najprv individuálne zapísať vektor (papier), potom vyjednajte spoločný. Divergencia je nález — zaznamenajte ju.">…</p>
+  </div>
+  <div class="margin-note" data-note="4"><label data-en="Margin note — section 4 (individual vectors, divergence)" data-sk="Margin note — sekcia 4 (individuálne vektory, divergencia)">…</label><textarea></textarea></div>
+</section>
+
+<!-- ═══ 5 · POSTURE ═══ -->
+<section class="block" id="s-posture">
+  <h2 data-en="5 · Investment & change posture" data-sk="5 · Investičný postoj a postoj k zmene">…</h2>
+  <p class="lead" data-en="Three signals that triangulate the vector." data-sk="Tri signály triangulujúce vektor.">…</p>
+
+  <div class="q" data-field="INVESTMENT_POSTURE" data-type="single">
+    <label class="head"><span class="code-chip">INVESTMENT_POSTURE</span><span data-en="Leadership's preferred investment approach" data-sk="Preferovaný investičný prístup vedenia">…</span><span class="grade-chip"></span></label>
+    <div class="opts" style="grid-template-columns: 1fr;">
+      <div class="opt" data-v="protect"><b data-en="Protect and optimize the existing" data-sk="Chrániť a optimalizovať existujúce">…</b><span class="d" data-en="OPEX efficiency and stability" data-sk="OPEX efektivita a stabilita">…</span></div>
+      <div class="opt" data-v="selective"><b data-en="Invest selectively in growth" data-sk="Selektívne investovať do rastu">…</b><span class="d" data-en="chosen initiatives with clear payback" data-sk="vybrané iniciatívy s jasnou návratnosťou">…</span></div>
+      <div class="opt" data-v="fund_change"><b data-en="Fund structural moves" data-sk="Financovať štrukturálne kroky">…</b><span class="d" data-en="longer-payback strategic bets" data-sk="strategické stávky s dlhšou návratnosťou">…</span></div>
+    </div>
+    <div class="prefill-note" contenteditable="true"></div>
+  </div>
+  <div class="q" data-field="UNCERTAINTY_TOLERANCE" data-type="likert">
+    <label class="head"><span class="code-chip">UNCERTAINTY_TOLERANCE</span><span data-en="How much uncertainty is leadership willing to accept? (1–5)" data-sk="Akú mieru neistoty je vedenie ochotné akceptovať? (1–5)">…</span><span class="grade-chip"></span></label>
+    <div class="scale-row"><button data-v="1">1</button><button data-v="2">2</button><button data-v="3">3</button><button data-v="4">4</button><button data-v="5">5</button></div>
+    <div class="scale-ends"><span data-en="1 = we prefer certainty" data-sk="1 = preferujeme istotu">…</span><span data-en="5 = comfortable in uncertainty" data-sk="5 = komfort v neistote">…</span></div>
+    <div class="prefill-note" contenteditable="true"></div>
+  </div>
+  <div class="q" data-field="CHANGE_ADAPTABILITY" data-type="likert">
+    <label class="head"><span class="code-chip">CHANGE_ADAPTABILITY</span><span data-en="How does the organization naturally handle change? (1–5)" data-sk="Ako organizácia prirodzene zvláda zmenu? (1–5)">…</span><span class="grade-chip"></span></label>
+    <div class="scale-row"><button data-v="1">1</button><button data-v="2">2</button><button data-v="3">3</button><button data-v="4">4</button><button data-v="5">5</button></div>
+    <div class="scale-ends"><span data-en="1 = systematic and careful" data-sk="1 = systematicky a opatrne">…</span><span data-en="5 = adaptation is in our DNA" data-sk="5 = adaptácia je v našej DNA">…</span></div>
+    <div class="prefill-note" contenteditable="true"></div>
+  </div>
+  <div class="margin-note" data-note="5"><label data-en="Margin note — section 5" data-sk="Margin note — sekcia 5">…</label><textarea></textarea></div>
+</section>
+
+<!-- ═══ 6 · LEADERSHIP & MOMENTUM ═══ -->
+<section class="block" id="s-momentum">
+  <h2 data-en="6 · Leadership & momentum" data-sk="6 · Leadership a momentum">…</h2>
+  <p class="lead" data-en="Direction alignment and lessons from past change." data-sk="Zhoda smerovania a poučenia z minulých zmien.">…</p>
+
+  <div class="q" data-field="LEADERSHIP_ALIGNMENT" data-type="single">
+    <label class="head"><span class="code-chip">LEADERSHIP_ALIGNMENT</span><span data-en="Leadership alignment on direction" data-sk="Zhoda vedenia na smerovaní">…</span><span class="grade-chip"></span></label>
+    <div class="opts">
+      <div class="opt" data-v="unified"><b data-en="Unified direction" data-sk="Jednotný smer">…</b></div>
+      <div class="opt" data-v="strong"><b data-en="Strong alignment, open details" data-sk="Silná zhoda, otvorené detaily">…</b></div>
+      <div class="opt" data-v="dialogue"><b data-en="Diverse perspectives in dialogue" data-sk="Rôzne pohľady v dialógu">…</b></div>
+      <div class="opt" data-v="contested"><b data-en="Active strategic contest" data-sk="Aktívny strategický spor">…</b></div>
+    </div>
+    <div class="prefill-note" contenteditable="true"></div>
+  </div>
+  <div class="q" data-field="CHANGE_MOMENTUM" data-type="single">
+    <label class="head"><span class="code-chip">CHANGE_MOMENTUM</span><span data-en="Momentum for change" data-sk="Momentum pre zmenu">…</span><span class="grade-chip"></span></label>
+    <div class="opts">
+      <div class="opt" data-v="stable"><b data-en="Stable situation" data-sk="Stabilná situácia">…</b><span class="d" data-en="time to plan long-term" data-sk="čas plánovať dlhodobo">…</span></div>
+      <div class="opt" data-v="gradual"><b data-en="Gradual shift" data-sk="Postupný posun">…</b></div>
+      <div class="opt" data-v="active"><b data-en="Active momentum" data-sk="Aktívny pohyb">…</b><span class="d" data-en="need to act soon" data-sk="treba konať čoskoro">…</span></div>
+      <div class="opt" data-v="board_level"><b data-en="Top-level strategic priority" data-sk="Priorita najvyššej úrovne">…</b></div>
+    </div>
+    <div class="prefill-note" contenteditable="true"></div>
+  </div>
+  <div class="q" data-field="LAST_INITIATIVE_TYPE" data-type="single">
+    <label class="head"><span class="code-chip">LAST_INITIATIVE_TYPE</span><span data-en="Nature of the last significant strategic initiative" data-sk="Charakter poslednej významnej strategickej iniciatívy">…</span><span class="grade-chip"></span></label>
+    <div class="opts">
+      <div class="opt" data-v="ma"><b data-en="Acquisition / merger" data-sk="Akvizícia / fúzia">…</b></div>
+      <div class="opt" data-v="restructuring"><b data-en="Restructuring" data-sk="Reštrukturalizácia">…</b></div>
+      <div class="opt" data-v="new_product"><b data-en="New product / service launch" data-sk="Nový produkt / služba">…</b></div>
+      <div class="opt" data-v="digital"><b data-en="Digital transformation" data-sk="Digitálna transformácia">…</b></div>
+      <div class="opt" data-v="market_entry"><b data-en="New market entry" data-sk="Vstup na nový trh">…</b></div>
+      <div class="opt" data-v="leadership"><b data-en="Leadership / ownership change" data-sk="Zmena vedenia / vlastníctva">…</b></div>
+      <div class="opt" data-v="culture"><b data-en="Cultural initiative" data-sk="Kultúrna iniciatíva">…</b></div>
+      <div class="opt" data-v="none"><b data-en="None significant recently" data-sk="Žiadna významná nedávno">…</b></div>
+    </div>
+    <div class="prefill-note" contenteditable="true"></div>
+  </div>
+  <div class="q" data-field="LAST_INITIATIVE_LESSON" data-type="single">
+    <label class="head"><span class="code-chip">LAST_INITIATIVE_LESSON</span><span data-en="What lessons did it leave?" data-sk="Aké poučenia zanechala?">…</span><span class="grade-chip"></span></label>
+    <div class="opts">
+      <div class="opt" data-v="confirmed"><b data-en="Confirmed strengths and direction" data-sk="Potvrdila silné stránky a smer">…</b></div>
+      <div class="opt" data-v="growth"><b data-en="Revealed growth opportunities" data-sk="Odhalila príležitosti rastu">…</b></div>
+      <div class="opt" data-v="capability"><b data-en="Strengthened delivery capability" data-sk="Posilnila schopnosť doručiť">…</b></div>
+      <div class="opt" data-v="learning"><b data-en="Opened room for improvement" data-sk="Otvorila priestor na zlepšenie">…</b></div>
+      <div class="opt" data-v="analyzing"><b data-en="Still being analyzed" data-sk="Ešte sa analyzuje">…</b></div>
+      <div class="opt" data-v="na"><b data-en="N/A" data-sk="N/A">…</b></div>
+    </div>
+    <div class="prefill-note" contenteditable="true"></div>
+  </div>
+  <div class="q" data-field="OPPORTUNITIES_AT_STAKE" data-type="multi">
+    <label class="head"><span class="code-chip">OPPORTUNITIES_AT_STAKE</span><span data-en="Which opportunities should not be left unexploited?" data-sk="Ktoré príležitosti by nemali ostať nevyužité?">…</span><span class="grade-chip"></span></label>
+    <div class="opts">
+      <div class="opt multi" data-v="market_share"><b data-en="Strengthening market share" data-sk="Posilnenie trhového podielu">…</b></div>
+      <div class="opt multi" data-v="key_customers"><b data-en="Retaining key customers" data-sk="Udržanie kľúčových zákazníkov">…</b></div>
+      <div class="opt multi" data-v="talent"><b data-en="Attracting & retaining talent" data-sk="Získanie a udržanie talentu">…</b></div>
+      <div class="opt multi" data-v="margins"><b data-en="Improving margins" data-sk="Zlepšenie marží">…</b></div>
+      <div class="opt multi" data-v="regulatory"><b data-en="Regulatory standing" data-sk="Regulatórna pozícia">…</b></div>
+      <div class="opt multi" data-v="flexibility"><b data-en="Strategic flexibility" data-sk="Strategická flexibilita">…</b></div>
+      <div class="opt multi" data-v="differentiation"><b data-en="Competitive differentiation" data-sk="Konkurenčná diferenciácia">…</b></div>
+      <div class="opt multi" data-v="reputation"><b data-en="Reputation & brand" data-sk="Reputácia a značka">…</b></div>
+      <div class="opt multi" data-v="reinvention"><b data-en="Structural reinvention" data-sk="Štrukturálna obnova">…</b></div>
+      <div class="opt multi" data-v="excellence"><b data-en="Operational excellence focus" data-sk="Fokus na operatívnu excelenciu">…</b></div>
+    </div>
+    <div class="prefill-note" contenteditable="true"></div>
+  </div>
+  <div class="margin-note" data-note="6"><label data-en="Margin note — section 6" data-sk="Margin note — sekcia 6">…</label><textarea></textarea></div>
+</section>
+
+<!-- ═══ 7 · CAPABILITY CONTEXT ═══ -->
+<section class="block" id="s-capability">
+  <h2 data-en="7 · Capability context" data-sk="7 · Kontext schopností">…</h2>
+  <p class="lead" data-en="A light capacity check — full capability assessment lives in the D3 instruments." data-sk="Ľahký check kapacity — plný capability assessment je v D3 instrumentoch.">…</p>
+
+  <div class="q" data-field="DATA_MATURITY" data-type="likert">
+    <label class="head"><span class="code-chip">DATA_MATURITY</span><span data-en="Data maturity self-assessment (1–5)" data-sk="Self-assessment dátovej zrelosti (1–5)">…</span><span class="grade-chip"></span></label>
+    <div class="scale-row"><button data-v="1">1</button><button data-v="2">2</button><button data-v="3">3</button><button data-v="4">4</button><button data-v="5">5</button></div>
+    <div class="scale-ends"><span data-en="1 = at the start of the journey" data-sk="1 = na začiatku cesty">…</span><span data-en="5 = single source of truth" data-sk="5 = jednotný zdroj pravdy">…</span></div>
+    <div class="prefill-note" contenteditable="true"></div>
+  </div>
+  <div class="q" data-field="MASTER_DATA" data-type="single">
+    <label class="head"><span class="code-chip">MASTER_DATA</span><span data-en="State of master data" data-sk="Stav master dát">…</span><span class="grade-chip"></span></label>
+    <div class="opts">
+      <div class="opt" data-v="organizing"><b data-en="Being organized" data-sk="V procese organizácie">…</b></div>
+      <div class="opt" data-v="distributed"><b data-en="Distributed across systems" data-sk="Distribuované po systémoch">…</b></div>
+      <div class="opt" data-v="managed"><b data-en="Actively managed" data-sk="Aktívne spravované">…</b></div>
+      <div class="opt" data-v="ssot"><b data-en="Single source of truth" data-sk="Jednotný zdroj pravdy">…</b></div>
+    </div>
+    <div class="prefill-note" contenteditable="true"></div>
+  </div>
+  <div class="q" data-field="GOVERNANCE_FORUM" data-type="single">
+    <label class="head"><span class="code-chip">GOVERNANCE_FORUM</span><span data-en="Governance forum for strategic initiatives" data-sk="Governance forum pre strategické iniciatívy">…</span><span class="grade-chip"></span></label>
+    <div class="opts">
+      <div class="opt" data-v="forming"><b data-en="Not yet formalized" data-sk="Zatiaľ neformalizované">…</b></div>
+      <div class="opt" data-v="adhoc"><b data-en="As needed" data-sk="Podľa potreby">…</b></div>
+      <div class="opt" data-v="formal"><b data-en="Regular formal meetings" data-sk="Pravidelné formálne stretnutia">…</b></div>
+      <div class="opt" data-v="board"><b data-en="Part of board agenda" data-sk="Súčasť board agendy">…</b></div>
+    </div>
+    <div class="prefill-note" contenteditable="true"></div>
+  </div>
+  <div class="q" data-field="DECISION_MODEL" data-type="single">
+    <label class="head"><span class="code-chip">DECISION_MODEL</span><span data-en="How new strategic initiatives get decided" data-sk="Ako sa rozhoduje o nových strategických iniciatívach">…</span><span class="grade-chip"></span></label>
+    <div class="opts">
+      <div class="opt" data-v="case_by_case"><b data-en="Flexibly / case-by-case" data-sk="Flexibilne / prípad od prípadu">…</b></div>
+      <div class="opt" data-v="propose_approve"><b data-en="Unit proposes, leadership approves" data-sk="Útvar navrhuje, vedenie schvaľuje">…</b></div>
+      <div class="opt" data-v="stage_gate"><b data-en="Formal stage-gate process" data-sk="Formálny stage-gate proces">…</b></div>
+      <div class="opt" data-v="planning_cycle"><b data-en="Strategic planning cycle" data-sk="Strategický plánovací cyklus">…</b></div>
+      <div class="opt" data-v="exec_committee"><b data-en="Executive committee" data-sk="Exekutívny výbor">…</b></div>
+      <div class="opt" data-v="evolving"><b data-en="Model is evolving" data-sk="Model sa vyvíja">…</b></div>
+    </div>
+    <div class="prefill-note" contenteditable="true"></div>
+  </div>
+  <div class="q" data-field="HARD_CONSTRAINTS" data-type="multi">
+    <label class="head"><span class="code-chip">HARD_CONSTRAINTS</span><span data-en="Hard constraints to account for" data-sk="Tvrdé obmedzenia, s ktorými treba rátať">…</span><span class="grade-chip"></span></label>
+    <div class="opts">
+      <div class="opt multi" data-v="privacy"><b data-en="Personal data protection" data-sk="Ochrana osobných údajov">…</b></div>
+      <div class="opt multi" data-v="sectoral"><b data-en="Sectoral regulation" data-sk="Sektorová regulácia">…</b></div>
+      <div class="opt multi" data-v="sovereignty"><b data-en="Data sovereignty / residency" data-sk="Dátová suverenita / rezidencia">…</b></div>
+      <div class="opt multi" data-v="contracts"><b data-en="Customer contracts / SLA" data-sk="Zákaznícke kontrakty / SLA">…</b></div>
+      <div class="opt multi" data-v="ip"><b data-en="IP / copyright" data-sk="IP / autorské práva">…</b></div>
+      <div class="opt multi" data-v="cloud"><b data-en="Cloud restrictions" data-sk="Cloud obmedzenia">…</b></div>
+      <div class="opt multi" data-v="vendor"><b data-en="Vendor commitments" data-sk="Vendor záväzky">…</b></div>
+      <div class="opt multi" data-v="none"><b data-en="No critical constraints" data-sk="Žiadne kritické obmedzenia">…</b></div>
+    </div>
+    <div class="prefill-note" contenteditable="true"></div>
+  </div>
+  <div class="margin-note" data-note="7"><label data-en="Margin note — section 7" data-sk="Margin note — sekcia 7">…</label><textarea></textarea></div>
+</section>
+
+<!-- ═══ 8 · VALUE FOCUS ═══ -->
+<section class="block" id="s-value">
+  <h2 data-en="8 · Value focus & investment" data-sk="8 · Hodnotový fokus a investícia">…</h2>
+  <p class="lead" data-en="Where change would create the most value, and what the organization will commit." data-sk="Kde by zmena tvorila najväčšiu hodnotu a čo je organizácia ochotná investovať.">…</p>
+
+  <div class="q" data-field="VALUE_AREAS" data-type="multi">
+    <label class="head"><span class="code-chip">VALUE_AREAS</span><span data-en="Where could change create the most value?" data-sk="Kde by zmena mohla tvoriť najväčšiu hodnotu?">…</span><span class="grade-chip"></span></label>
+    <div class="opts">
+      <div class="opt multi" data-v="processes"><b data-en="Internal processes / efficiency" data-sk="Interné procesy / efektivita">…</b></div>
+      <div class="opt multi" data-v="cx"><b data-en="Customer experience" data-sk="Zákaznícka skúsenosť">…</b></div>
+      <div class="opt multi" data-v="products"><b data-en="Products & services" data-sk="Produkty a služby">…</b></div>
+      <div class="opt multi" data-v="decisions"><b data-en="Decision-making & reporting" data-sk="Rozhodovanie a reporting">…</b></div>
+      <div class="opt multi" data-v="quality"><b data-en="Quality, compliance, audit" data-sk="Kvalita, compliance, audit">…</b></div>
+      <div class="opt multi" data-v="sales"><b data-en="Sales & marketing" data-sk="Predaj a marketing">…</b></div>
+      <div class="opt multi" data-v="people"><b data-en="People / talent / culture" data-sk="Ľudia / talent / kultúra">…</b></div>
+      <div class="opt multi" data-v="resilience"><b data-en="Operational resilience / risk" data-sk="Operatívna odolnosť / risk">…</b></div>
+    </div>
+    <div class="prefill-note" contenteditable="true"></div>
+  </div>
+  <div class="q" data-field="RESULT_HORIZON" data-type="single">
+    <label class="head"><span class="code-chip">RESULT_HORIZON</span><span data-en="Realistic horizon of the first measurable result" data-sk="Realistický horizont prvého merateľného výsledku">…</span><span class="grade-chip"></span></label>
+    <div class="opts">
+      <div class="opt" data-v="1-3m"><b data-en="1–3 months" data-sk="1–3 mesiace">…</b></div>
+      <div class="opt" data-v="3-6m"><b data-en="3–6 months" data-sk="3–6 mesiacov">…</b></div>
+      <div class="opt" data-v="6-12m"><b data-en="6–12 months" data-sk="6–12 mesiacov">…</b></div>
+      <div class="opt" data-v="12-24m"><b data-en="12–24 months" data-sk="12–24 mesiacov">…</b></div>
+    </div>
+    <div class="prefill-note" contenteditable="true"></div>
+  </div>
+  <div class="q" data-field="INVESTMENT_RANGE" data-type="single">
+    <label class="head"><span class="code-chip">INVESTMENT_RANGE</span><span data-en="Investment willingness for the horizon (order of magnitude, incl. internal effort)" data-sk="Investičná ochota na horizont (rádovo, vrátane interného úsilia)">…</span><span class="grade-chip"></span></label>
+    <div class="opts">
+      <div class="opt" data-v="minimal"><b data-en="Minimal" data-sk="Minimálna">…</b><span class="d" data-en="small focused pilots" data-sk="malé sústredené piloty">…</span></div>
+      <div class="opt" data-v="selective"><b data-en="Selective" data-sk="Selektívna">…</b><span class="d" data-en="a few funded initiatives" data-sk="niekoľko financovaných iniciatív">…</span></div>
+      <div class="opt" data-v="programmatic"><b data-en="Programmatic" data-sk="Programová">…</b><span class="d" data-en="a coordinated program" data-sk="koordinovaný program">…</span></div>
+      <div class="opt" data-v="strategic"><b data-en="Strategic" data-sk="Strategická">…</b><span class="d" data-en="a multi-year strategic bet" data-sk="viacročná strategická stávka">…</span></div>
+      <div class="opt" data-v="undecided"><b data-en="Still deciding" data-sk="Ešte sa rozhoduje">…</b></div>
+    </div>
+    <div class="prefill-note" contenteditable="true"></div>
+  </div>
+  <div class="margin-note" data-note="8"><label data-en="Margin note — section 8" data-sk="Margin note — sekcia 8">…</label><textarea></textarea></div>
+</section>
+
+<!-- ═══ 9 · SUCCESS ═══ -->
+<section class="block" id="s-vision">
+  <h2 data-en="9 · Success vision & accelerators" data-sk="9 · Vízia úspechu a akcelerátory">…</h2>
+  <p class="lead" data-en="What would winning look like, and what would speed it up." data-sk="Ako vyzerá víťazstvo a čo by ho urýchlilo.">…</p>
+
+  <div class="q" data-field="TOP_ACCELERATOR" data-type="single">
+    <label class="head"><span class="code-chip">TOP_ACCELERATOR</span><span data-en="What would most accelerate strategic change?" data-sk="Čo by najviac urýchlilo strategickú zmenu?">…</span><span class="grade-chip"></span></label>
+    <div class="opts">
+      <div class="opt" data-v="skills"><b data-en="Strengthening skills & know-how" data-sk="Posilnenie skills a know-how">…</b></div>
+      <div class="opt" data-v="funding"><b data-en="Additional funding" data-sk="Dodatočné financovanie">…</b></div>
+      <div class="opt" data-v="sponsorship"><b data-en="Stronger executive sponsorship" data-sk="Silnejší exekutívny sponzoring">…</b></div>
+      <div class="opt" data-v="reg_certainty"><b data-en="Regulatory certainty" data-sk="Regulatórna istota">…</b></div>
+      <div class="opt" data-v="technology"><b data-en="Technology readiness" data-sk="Technologická pripravenosť">…</b></div>
+      <div class="opt" data-v="change_capability"><b data-en="Change delivery capability" data-sk="Schopnosť doručiť zmenu">…</b></div>
+      <div class="opt" data-v="data_quality"><b data-en="Higher data quality" data-sk="Vyššia kvalita dát">…</b></div>
+      <div class="opt" data-v="process_maturity"><b data-en="Process maturity" data-sk="Procesná zrelosť">…</b></div>
+      <div class="opt" data-v="priorities"><b data-en="Clarified priorities" data-sk="Ujasnené priority">…</b></div>
+      <div class="opt" data-v="partnerships"><b data-en="Stronger partnerships" data-sk="Silnejšie partnerstvá">…</b></div>
+    </div>
+    <div class="prefill-note" contenteditable="true"></div>
+  </div>
+  <div class="q" data-field="SUCCESS_METRICS" data-type="multi">
+    <label class="head"><span class="code-chip">SUCCESS_METRICS</span><span data-en="What does success look like at the end of the horizon?" data-sk="Ako vyzerá úspech na konci horizontu?">…</span><span class="grade-chip"></span></label>
+    <div class="opts">
+      <div class="opt multi" data-v="revenue"><b data-en="Higher revenue / new streams" data-sk="Vyššie tržby / nové zdroje">…</b></div>
+      <div class="opt multi" data-v="cost"><b data-en="Lower operating cost" data-sk="Nižšie prevádzkové náklady">…</b></div>
+      <div class="opt multi" data-v="speed"><b data-en="Faster delivery / time-to-market" data-sk="Rýchlejšie dodanie / time-to-market">…</b></div>
+      <div class="opt multi" data-v="satisfaction"><b data-en="Higher customer satisfaction" data-sk="Vyššia spokojnosť zákazníkov">…</b></div>
+      <div class="opt multi" data-v="new_offerings"><b data-en="New offerings in market" data-sk="Nové ponuky na trhu">…</b></div>
+      <div class="opt multi" data-v="compliance"><b data-en="Better compliance / lower risk" data-sk="Lepšia compliance / nižší risk">…</b></div>
+      <div class="opt multi" data-v="productivity"><b data-en="Higher employee productivity" data-sk="Vyššia produktivita">…</b></div>
+      <div class="opt multi" data-v="expansion"><b data-en="Market expansion" data-sk="Trhová expanzia">…</b></div>
+      <div class="opt multi" data-v="quality"><b data-en="Higher quality / fewer errors" data-sk="Vyššia kvalita / menej chýb">…</b></div>
+      <div class="opt multi" data-v="data_driven"><b data-en="Better data-driven decisions" data-sk="Lepšie dátové rozhodovanie">…</b></div>
+    </div>
+    <div class="prefill-note" contenteditable="true"></div>
+  </div>
+  <div class="margin-note" data-note="9"><label data-en="Margin note — section 9" data-sk="Margin note — sekcia 9">…</label><textarea></textarea></div>
+</section>
+
+<!-- ═══ 10 · RESULTS ═══ -->
+<section class="block" id="s-results">
+  <h2 data-en="10 · Results" data-sk="10 · Výsledky">…</h2>
+  <p class="lead" data-en="Computed vector, red flags with catalog IDs (Spec 05), and exports." data-sk="Vypočítaný vektor, red flags s katalógovými ID (Spec 05) a exporty.">…</p>
+
+  <div class="verdict">
+    <div class="headline" id="verdictText">—</div>
+    <div class="vec-bar" style="max-width:560px;margin:14px auto 0;">
+      <div class="b-sustain" id="rb-sustain" style="width:33%">Sustain 33</div>
+      <div class="b-scale" id="rb-scale" style="width:34%">Scale 34</div>
+      <div class="b-shift" id="rb-shift" style="width:33%">Shift 33</div>
+    </div>
+    <p class="hint" id="verdictExplain" style="max-width:640px;margin:10px auto 0;"></p>
+  </div>
+
+  <div id="flagsBox" class="flags none"><b data-en="No red flags detected." data-sk="Žiadne red flags.">…</b></div>
+
+  <div class="summary-list" id="summaryList"></div>
+
+  <div class="actions">
+    <button class="primary" onclick="window.print()" data-en="🖨 Print / PDF" data-sk="🖨 Tlač / PDF">…</button>
+    <button onclick="exportEnvelope()" data-en="⇩ Export envelope (JSON)" data-sk="⇩ Export envelope (JSON)">…</button>
+    <button onclick="exportMarkdown()" data-en="⇩ Export Markdown" data-sk="⇩ Export Markdown">…</button>
+    <button onclick="copyMarkdown()" data-en="⧉ Copy Markdown" data-sk="⧉ Kopírovať Markdown">…</button>
+  </div>
+</section>
+
+<footer class="colophon">
+  AIROI Framework reference implementation · <span data-en="conforms to" data-sk="v súlade so">…</span> Spec 04 (Data Standard) &amp; Spec 05 (Red-Flag Catalog) · CC-BY-SA 4.0
+</footer>
+</main>
+</div>
+
+<script>
+"use strict";
+/* ════════ state ════════ */
+const LS_KEY = "airoi_ambition_v1";
+const LANG_KEY = "airoi_lang";
+let S = {};                     // field values
+let META = { grades: {}, notes: {}, margins: {} };
+try { const raw = localStorage.getItem(LS_KEY); if (raw) { const o = JSON.parse(raw); S = o.S || {}; META = o.META || META; } } catch (e) {}
+const save = () => { try { localStorage.setItem(LS_KEY, JSON.stringify({ S, META })); } catch (e) {} };
+
+/* ════════ i18n ════════ */
+let lang = localStorage.getItem(LANG_KEY) || "en";
+function applyLang() {
+  document.documentElement.lang = lang;
+  document.querySelectorAll("[data-en]").forEach(el => { const t = el.dataset[lang]; if (t) el.innerHTML = t; });
+  document.getElementById("langBtn").textContent = lang === "en" ? "SK" : "EN";
+  renderResults();
+}
+document.getElementById("langBtn").onclick = () => { lang = lang === "en" ? "sk" : "en"; localStorage.setItem(LANG_KEY, lang); applyLang(); };
+
+/* ════════ mode (Spec 04 §6) ════════ */
+let mode = "respondent";
+function setMode(m) {
+  mode = m;
+  document.body.classList.toggle("advisor", m === "advisor");
+  document.getElementById("modeAdvisor").classList.toggle("on", m === "advisor");
+  document.getElementById("modeRespondent").classList.toggle("on", m === "respondent");
+}
+document.getElementById("modeAdvisor").onclick = () => setMode("advisor");
+document.getElementById("modeRespondent").onclick = () => setMode("respondent");
+
+/* ════════ field binding ════════ */
+document.querySelectorAll(".q[data-field]").forEach(q => {
+  const code = q.dataset.field, type = q.dataset.type;
+
+  if (type === "text") {
+    const inp = q.querySelector("input[type=text]");
+    if (S[code] !== undefined) inp.value = S[code];
+    inp.addEventListener("input", () => { S[code] = inp.value; save(); });
+  }
+  if (type === "single") {
+    const opts = q.querySelectorAll(".opt");
+    opts.forEach(o => {
+      if (S[code] === o.dataset.v) o.classList.add("sel");
+      o.addEventListener("click", () => {
+        opts.forEach(x => x.classList.remove("sel"));
+        o.classList.add("sel"); S[code] = o.dataset.v; save(); renderResults();
+      });
+    });
+  }
+  if (type === "multi") {
+    const opts = q.querySelectorAll(".opt");
+    if (!Array.isArray(S[code])) S[code] = S[code] ? S[code] : [];
+    opts.forEach(o => {
+      if (S[code].includes(o.dataset.v)) o.classList.add("sel");
+      o.addEventListener("click", () => {
+        o.classList.toggle("sel");
+        S[code] = Array.from(q.querySelectorAll(".opt.sel")).map(x => x.dataset.v);
+        save(); renderResults();
+      });
+    });
+  }
+  if (type === "likert") {
+    const btns = q.querySelectorAll(".scale-row button");
+    btns.forEach(b => {
+      if (S[code] === parseInt(b.dataset.v, 10)) b.classList.add("sel");
+      b.addEventListener("click", () => {
+        btns.forEach(x => x.classList.remove("sel"));
+        b.classList.add("sel"); S[code] = parseInt(b.dataset.v, 10); save(); renderResults();
+      });
+    });
+  }
+
+  /* rationale callout persistence */
+  const note = q.querySelector(".prefill-note");
+  if (note) {
+    if (META.notes[code]) { note.textContent = META.notes[code]; note.classList.add("filled"); }
+    note.addEventListener("input", () => { META.notes[code] = note.textContent; save(); });
+  }
+  const chip = q.querySelector(".grade-chip");
+  if (chip && META.grades[code]) { chip.textContent = META.grades[code]; chip.className = "grade-chip filled g-" + META.grades[code]; }
+});
+
+/* margin notes */
+document.querySelectorAll(".margin-note").forEach(m => {
+  const id = m.dataset.note, ta = m.querySelector("textarea");
+  if (META.margins[id]) ta.value = META.margins[id];
+  ta.addEventListener("input", () => { META.margins[id] = ta.value; save(); });
+});
+
+/* ════════ Ambition Vector — linked sliders ════════ */
+const AXES = ["sustain", "scale", "shift"];
+let V = { sustain: 33, scale: 34, shift: 33 };
+if (S.AMBITION_VECTOR && typeof S.AMBITION_VECTOR.sustain === "number") V = { ...S.AMBITION_VECTOR };
+const sliders = {}; document.querySelectorAll("[data-axis]").forEach(sl => sliders[sl.dataset.axis] = sl);
+
+function paintVector() {
+  AXES.forEach(a => { sliders[a].value = V[a]; sliders[a].closest(".vec-row").querySelector("output").textContent = V[a]; });
+  const bar = document.querySelector("#s-vector .vec-bar");
+  bar.querySelector(".b-sustain").style.width = V.sustain + "%"; bar.querySelector(".b-sustain").textContent = V.sustain >= 8 ? V.sustain : "";
+  bar.querySelector(".b-scale").style.width = V.scale + "%";     bar.querySelector(".b-scale").textContent = V.scale >= 8 ? V.scale : "";
+  bar.querySelector(".b-shift").style.width = V.shift + "%";     bar.querySelector(".b-shift").textContent = V.shift >= 8 ? V.shift : "";
+  S.AMBITION_VECTOR = { sustain: V.sustain, scale: V.scale, shift: V.shift };
+  save(); renderResults();
+}
+function rebalance(which, nv) {
+  nv = Math.max(0, Math.min(100, parseInt(nv, 10) || 0));
+  const others = AXES.filter(a => a !== which);
+  const d = nv - V[which];
+  let a1 = V[others[0]] - d / 2, a2 = V[others[1]] - d / 2;
+  if (a1 < 0) { a2 += a1; a1 = 0; } if (a2 < 0) { a1 += a2; a2 = 0; }
+  a1 = Math.round(Math.max(0, Math.min(100, a1))); a2 = Math.round(Math.max(0, Math.min(100, a2)));
+  V[which] = Math.max(0, Math.min(100, 100 - a1 - a2)); V[others[0]] = a1; V[others[1]] = a2;
+  paintVector();
+}
+AXES.forEach(a => sliders[a].addEventListener("input", () => rebalance(a, sliders[a].value)));
+paintVector();
+
+/* ════════ computation (Spec 03/D2) ════════ */
+function computeVector() {
+  let s = V.sustain, c = V.scale, h = V.shift;
+  const adj = [];
+  if (S.INVESTMENT_POSTURE === "protect")     { s += 4; c -= 2; h -= 2; adj.push("posture: protect → +Sustain"); }
+  if (S.INVESTMENT_POSTURE === "selective")   { s -= 2; c += 4; h -= 2; adj.push("posture: selective → +Scale"); }
+  if (S.INVESTMENT_POSTURE === "fund_change") { s -= 4; h += 4;         adj.push("posture: fund change → +Shift"); }
+  if (S.UNCERTAINTY_TOLERANCE <= 2)           { s += 3; h -= 3; adj.push("low uncertainty tolerance → +Sustain"); }
+  if (S.UNCERTAINTY_TOLERANCE >= 4)           { s -= 3; h += 3; adj.push("high uncertainty tolerance → +Shift"); }
+  if (S.CHANGE_ADAPTABILITY <= 2)             { s += 3; h -= 3; adj.push("careful change handling → +Sustain"); }
+  if (S.CHANGE_ADAPTABILITY >= 4)             { s -= 3; h += 3; adj.push("high adaptability → +Shift"); }
+  if (S.CHANGE_MOMENTUM === "board_level")    { s -= 4; h += 4; adj.push("top-level momentum → +Shift"); }
+  if (S.CHANGE_MOMENTUM === "active")         { s -= 2; h += 2; adj.push("active momentum → +Shift"); }
+  if (S.CHANGE_MOMENTUM === "stable")         { s += 3; h -= 3; adj.push("stable situation → +Sustain"); }
+
+  s = Math.max(0, s); c = Math.max(0, c); h = Math.max(0, h);
+  const t = s + c + h || 1; s = s / t * 100; c = c / t * 100; h = h / t * 100;
+
+  const pen = [];
+  if (h > 30 && S.UNCERTAINTY_TOLERANCE && S.UNCERTAINTY_TOLERANCE <= 2) { h -= 15; c += 15; pen.push("Realism: Shift −15 → Scale (ambition without uncertainty tolerance)"); }
+  if (h > 30 && S.LEADERSHIP_ALIGNMENT === "contested")                  { h -= 10; c += 5; s += 5; pen.push("Realism: Shift −10 (contested leadership)"); }
+  if (c > 60 && S.DATA_MATURITY && S.DATA_MATURITY <= 2)                 { c -= 10; s += 10; pen.push("Realism: Scale −10 → Sustain (foundation first)"); }
+
+  s = Math.round(s / 5) * 5; c = Math.round(c / 5) * 5; h = 100 - s - c;
+  if (h < 0) { c += h; h = 0; }
+
+  let mode2;
+  if (s >= 45) mode2 = "SUSTAIN-dominant";
+  else if (c >= 45) mode2 = "SCALE-dominant";
+  else if (h >= 45) mode2 = "SHIFT-dominant";
+  else { const arr = [["Sustain", s], ["Scale", c], ["Shift", h]].sort((x, y) => y[1] - x[1]); mode2 = arr[0][0].toUpperCase() + "–" + arr[1][0] + " hybrid"; }
+  return { s, c, h, mode: mode2, adj, pen };
+}
+
+/* Red flags — IDs per Spec 05 */
+function redFlags() {
+  const f = [], sk = lang === "sk", h = V.shift, c = V.scale;
+  const add = (id, en, skk) => f.push({ id, txt: sk ? skk : en });
+  if (h > 25 && S.UNCERTAINTY_TOLERANCE && S.UNCERTAINTY_TOLERANCE <= 2)
+    add("RF-01", `Shift ${h} with low uncertainty tolerance — validate readiness to operate under uncertainty.`, `Shift ${h} pri nízkej tolerancii neistoty — validovať pripravenosť na neistotu.`);
+  if (h > 30 && S.LEADERSHIP_ALIGNMENT === "contested")
+    add("RF-02", "High Shift amid contested leadership — clarify agenda ownership; the polarization is a finding.", "Vysoký Shift pri spornom vedení — vyjasniť vlastníctvo agendy; polarizácia je nález.");
+  if (h > 30 && S.CHANGE_MOMENTUM === "stable")
+    add("RF-03", "High Shift in a self-declared stable situation — interrogate the rationale.", "Vysoký Shift pri deklarovanej stabilite — preveriť zdôvodnenie.");
+  if (S.RESULT_HORIZON === "1-3m" && h > 30)
+    add("RF-05", "Shift ambition expecting results within a quarter — structural change has structural timelines.", "Shift ambícia s výsledkom do kvartálu — štrukturálna zmena má štrukturálne časy.");
+  if (S.LAST_INITIATIVE_LESSON === "learning" && h > 30)
+    add("RF-06", "Last initiative under-delivered while ambition is Shift — strengthen delivery capability first.", "Posledná iniciatíva nedodala a ambícia je Shift — najprv posilniť schopnosť doručiť.");
+  if (S.INVESTMENT_RANGE === "minimal" && (h + c) > 60)
+    add("RF-07", "High change ambition with minimal investment willingness — one of the two is wrong.", "Vysoká ambícia pri minimálnej investičnej ochote — jedno z toho je nesprávne.");
+  if (S.INVESTMENT_POSTURE === "protect" && (h + c) > 60)
+    add("RF-08", "Protect-the-base posture conflicts with high Scale/Shift ambition — reconcile with the sponsor.", "Protect-the-base postoj v konflikte s vysokou Scale/Shift ambíciou — zladiť so sponzorom.");
+  if (Array.isArray(S.OPPORTUNITIES_AT_STAKE) && S.OPPORTUNITIES_AT_STAKE.includes("reinvention") && h < 30)
+    add("RF-09", "Structural reinvention flagged as at stake while Shift is low — threat unowned, or overstated?", "Štrukturálna obnova označená ako v hre pri nízkom Shift — hrozba bez vlastníka, alebo zveličená?");
+  return f;
+}
+
+/* ════════ results render ════════ */
+function optLabel(code, v) {
+  const q = document.querySelector(`.q[data-field="${code}"]`); if (!q) return v;
+  const o = q.querySelector(`.opt[data-v="${v}"]`); if (!o) return v;
+  const b = o.querySelector("b"); return b ? b.textContent.trim() : v;
+}
+function renderResults() {
+  const r = computeVector();
+  document.getElementById("verdictText").textContent = r.mode;
+  const rb = (id, w, name) => { const el = document.getElementById(id); el.style.width = w + "%"; el.textContent = w >= 10 ? `${name} ${w}` : ""; };
+  rb("rb-sustain", r.s, "Sustain"); rb("rb-scale", r.c, "Scale"); rb("rb-shift", r.h, "Shift");
+  let ex = (lang === "sk" ? "Vstupný vektor: " : "Input vector: ") + `${V.sustain}/${V.scale}/${V.shift}.`;
+  if (r.adj.length) ex += " " + (lang === "sk" ? "Úpravy: " : "Adjustments: ") + r.adj.join("; ") + ".";
+  if (r.pen.length) ex += " " + r.pen.join("; ") + ".";
+  document.getElementById("verdictExplain").textContent = ex;
+
+  const flags = redFlags(), box = document.getElementById("flagsBox");
+  if (flags.length) {
+    box.className = "flags some";
+    box.innerHTML = `<b>${lang === "sk" ? "Red flags (Spec 05):" : "Red flags (Spec 05):"}</b><ul>` +
+      flags.map(x => `<li><span class="rf-id">${x.id}</span>${x.txt}</li>`).join("") + "</ul>";
+  } else {
+    box.className = "flags none";
+    box.innerHTML = `<b>${lang === "sk" ? "Žiadne red flags — konzistentné odpovede." : "No red flags — answers are consistent."}</b>`;
+  }
+
+  const rows = [];
+  const push = (label, val) => { if (val !== undefined && val !== "" && val !== null && !(Array.isArray(val) && !val.length)) rows.push(`<div><span class="k">${label}:</span> ${val}</div>`); };
+  push("ORG", S.ORG_NAME); push("Date", S.SESSION_DATE);
+  push("Direction", optLabel("STRAT_DIRECTION", S.STRAT_DIRECTION));
+  push("Posture", optLabel("INVESTMENT_POSTURE", S.INVESTMENT_POSTURE));
+  push("Alignment", optLabel("LEADERSHIP_ALIGNMENT", S.LEADERSHIP_ALIGNMENT));
+  push("Momentum", optLabel("CHANGE_MOMENTUM", S.CHANGE_MOMENTUM));
+  push("Investment", optLabel("INVESTMENT_RANGE", S.INVESTMENT_RANGE));
+  document.getElementById("summaryList").innerHTML = rows.join("");
+}
+renderResults();
+
+/* ════════ envelope import/export (Spec 04) ════════ */
+document.getElementById("importBtn").onclick = () => document.getElementById("importFile").click();
+document.getElementById("importFile").addEventListener("change", ev => {
+  const file = ev.target.files[0]; if (!file) return;
+  const rd = new FileReader();
+  rd.onload = () => {
+    try {
+      const env = JSON.parse(rd.result);
+      if (!env.fields) throw new Error("no fields");
+      Object.entries(env.fields).forEach(([code, f]) => {
+        const q = document.querySelector(`.q[data-field="${code}"]`); if (!q) return;
+        if (f.values !== undefined) S[code] = f.values;
+        else if (code === "AMBITION_VECTOR" && typeof f.sustain === "number") { V = { sustain: f.sustain, scale: f.scale, shift: f.shift }; S[code] = { ...V }; }
+        else if (f.value !== undefined) S[code] = f.value;
+        if (f.confidence) META.grades[code] = f.confidence;
+        if (f.note) META.notes[code] = f.note;
+      });
+      if (env._meta && env._meta.margins) META.margins = { ...META.margins, ...env._meta.margins };
+      save(); location.reload();
+    } catch (e) { alert("Invalid envelope: " + e.message); }
+  };
+  rd.readAsText(file);
+});
+
+function buildEnvelope() {
+  const fields = {};
+  document.querySelectorAll(".q[data-field]").forEach(q => {
+    const code = q.dataset.field, type = q.dataset.type, f = {};
+    if (type === "vector") { Object.assign(f, S.AMBITION_VECTOR || V); }
+    else if (type === "multi") { if (Array.isArray(S[code]) && S[code].length) f.values = S[code]; }
+    else if (S[code] !== undefined && S[code] !== "") f.value = S[code];
+    if (META.grades[code]) f.confidence = META.grades[code];
+    if (META.notes[code]) f.note = META.notes[code];
+    if (Object.keys(f).length) fields[code] = f;
+  });
+  return {
+    _meta: { schema_version: 1, instrument: "ambition-calibration", stage: "alignment-session",
+             generated: new Date().toISOString(), margins: META.margins },
+    fields
+  };
+}
+function dl(name, text, mime) {
+  const b = new Blob([text], { type: mime }), u = URL.createObjectURL(b), a = document.createElement("a");
+  a.href = u; a.download = name; a.click(); URL.revokeObjectURL(u);
+}
+function exportEnvelope() { dl(`ambition_${(S.ORG_NAME || "org").replace(/\s+/g, "_")}.json`, JSON.stringify(buildEnvelope(), null, 2), "application/json"); }
+window.exportEnvelope = exportEnvelope;
+
+/* ════════ markdown export ════════ */
+function buildMarkdown() {
+  const r = computeVector(), flags = redFlags(), sk = lang === "sk";
+  let md = `# Ambition Calibration — ${S.ORG_NAME || "—"}\n\n`;
+  md += `**${sk ? "Dátum" : "Date"}:** ${S.SESSION_DATE || "—"}  \n**${sk ? "Účastníci" : "Participants"}:** ${S.PARTICIPANTS || "—"}  \n**${sk ? "Horizont" : "Horizon"}:** ${S.HORIZON || "—"}\n\n`;
+  md += `## Ambition Vector\n\n**${r.mode}**\n\n| Axis | % |\n|---|---|\n| Sustain | ${r.s} |\n| Scale | ${r.c} |\n| Shift | ${r.h} |\n\n`;
+  md += `${sk ? "Vstupný vektor" : "Input vector"}: ${V.sustain}/${V.scale}/${V.shift}\n`;
+  if (r.adj.length) md += `\n**Adjustments:**\n` + r.adj.map(x => `- ${x}`).join("\n") + "\n";
+  if (r.pen.length) md += `\n**Realism rules applied:**\n` + r.pen.map(x => `- ${x}`).join("\n") + "\n";
+  md += `\n## Red flags\n\n` + (flags.length ? flags.map(x => `- **${x.id}** — ${x.txt}`).join("\n") : (sk ? "_Žiadne._" : "_None._")) + "\n";
+  md += `\n## ${sk ? "Odpovede" : "Answers"}\n\n| Field | Value |\n|---|---|\n`;
+  document.querySelectorAll(".q[data-field]").forEach(q => {
+    const code = q.dataset.field; let v = S[code];
+    if (v === undefined || v === "" || v === null) return;
+    if (code === "AMBITION_VECTOR") return;
+    if (Array.isArray(v)) v = v.map(x => optLabel(code, x)).join(", ");
+    else if (q.dataset.type === "single") v = optLabel(code, v);
+    md += `| ${code} | ${String(v).replace(/\|/g, "\\|")} |\n`;
+  });
+  const margins = Object.entries(META.margins).filter(([, t]) => t && t.trim());
+  if (margins.length) { md += `\n## Margin notes\n\n`; margins.forEach(([id, t]) => md += `**Section ${id}:** ${t.trim()}\n\n`); }
+  md += `\n---\n*AIROI Framework reference implementation · CC-BY-SA 4.0*\n`;
+  return md;
+}
+function exportMarkdown() { dl(`ambition_${(S.ORG_NAME || "org").replace(/\s+/g, "_")}.md`, buildMarkdown(), "text/markdown"); }
+function copyMarkdown() { navigator.clipboard.writeText(buildMarkdown()).then(() => alert(lang === "sk" ? "Skopírované." : "Copied.")); }
+window.exportMarkdown = exportMarkdown; window.copyMarkdown = copyMarkdown;
+
+/* ════════ reset + rail highlight ════════ */
+document.getElementById("resetBtn").onclick = () => {
+  if (!confirm(lang === "sk" ? "Vymazať všetky odpovede?" : "Delete all answers?")) return;
+  localStorage.removeItem(LS_KEY); location.reload();
+};
+const obs = new IntersectionObserver(es => {
+  es.forEach(e => { if (e.isIntersecting) {
+    document.querySelectorAll("nav.rail a").forEach(a => a.classList.toggle("here", a.getAttribute("href") === "#" + e.target.id));
+  }});
+}, { rootMargin: "-40% 0px -55% 0px" });
+document.querySelectorAll("section.block").forEach(s => obs.observe(s));
+
+applyLang();
+</script>
+</body>
+</html>

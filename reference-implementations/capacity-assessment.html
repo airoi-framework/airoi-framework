@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Capacity Assessment — AIROI Instrument</title>
+<style>
+  :root {
+    --ink: #1c1917; --muted: #78716c; --line: #e7e5e4; --paper: #fafaf9; --card: #ffffff;
+    --accent: #4f46e5; --accent-soft: #eef2ff; --accent-deep: #3730a3;
+    --l0: #d6d3d1; --l1: #a5b4fc; --l2: #6366f1; --l3: #312e81; --na: #e7e5e4;
+    --ok: #059669; --warn: #d97706;
+    --grade-a: #166534; --grade-b: #1d4ed8; --grade-c: #b45309; --grade-x: #57534e;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body { background: var(--paper); color: var(--ink); font-family: "Segoe UI", system-ui, sans-serif; line-height: 1.55; }
+  .topbar { position: sticky; top: 0; z-index: 50; background: var(--card); border-bottom: 1px solid var(--line); padding: 10px 22px; display: flex; align-items: center; gap: 14px; }
+  .topbar .brand { font-weight: 700; color: var(--accent-deep); font-size: 1rem; }
+  .topbar .brand small { display: block; font-weight: 400; color: var(--muted); font-size: 0.72rem; }
+  .topbar .spacer { flex: 1; }
+  .mode-pill { display: flex; border: 1px solid var(--line); border-radius: 999px; overflow: hidden; font-size: 0.78rem; }
+  .mode-pill button { border: none; background: transparent; padding: 6px 14px; cursor: pointer; color: var(--muted); font-weight: 600; }
+  .mode-pill button.on { background: var(--accent); color: #fff; }
+  .tb-btn { border: 1px solid var(--line); background: var(--card); border-radius: 8px; padding: 6px 12px; cursor: pointer; font-size: 0.8rem; font-weight: 600; color: var(--ink); }
+  .tb-btn:hover { border-color: var(--accent); }
+  .wrap { display: grid; grid-template-columns: 230px 1fr; max-width: 1180px; margin: 0 auto; gap: 28px; padding: 26px 22px 120px; }
+  nav.rail { position: sticky; top: 66px; align-self: start; display: flex; flex-direction: column; gap: 2px; }
+  nav.rail a { text-decoration: none; color: var(--muted); font-size: 0.84rem; padding: 7px 12px; border-left: 3px solid transparent; border-radius: 0 8px 8px 0; }
+  nav.rail a:hover { color: var(--ink); background: var(--accent-soft); }
+  nav.rail a.here { color: var(--accent-deep); border-left-color: var(--accent); background: var(--accent-soft); font-weight: 600; }
+  main { min-width: 0; }
+  section.block { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 26px 28px; margin-bottom: 22px; scroll-margin-top: 78px; }
+  section.block > h2 { font-size: 1.15rem; margin-bottom: 4px; color: var(--accent-deep); }
+  .dom-tag { font-family: ui-monospace, monospace; background: var(--accent-soft); color: var(--accent-deep); border-radius: 6px; padding: 2px 8px; font-size: 0.8rem; vertical-align: middle; }
+  section.block > p.lead { color: var(--muted); font-size: 0.85rem; margin-bottom: 18px; }
+  .q { margin-bottom: 24px; }
+  .q > label.head { display: block; font-weight: 600; font-size: 0.95rem; margin-bottom: 8px; }
+  .code-chip { font-family: ui-monospace, monospace; font-size: 0.68rem; background: var(--accent-soft); color: var(--accent-deep); border-radius: 4px; padding: 1px 6px; margin-right: 7px; vertical-align: middle; }
+  input[type=text] { width: 100%; padding: 9px 12px; border: 1px solid var(--line); border-radius: 8px; font: inherit; }
+  input[type=text]:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+  textarea { width: 100%; min-height: 70px; padding: 9px 12px; border: 1px solid var(--line); border-radius: 8px; font: inherit; resize: vertical; }
+  .opts { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 7px; }
+  .opt { border: 1.5px solid var(--line); border-radius: 9px; padding: 9px 12px; cursor: pointer; font-size: 0.86rem; background: var(--card); }
+  .opt:hover { border-color: var(--accent); }
+  .opt.sel { border-color: var(--accent); background: var(--accent-soft); }
+  .opt.multi.sel { border-color: var(--ok); background: #ecfdf5; }
+  .opt b { display: block; font-size: 0.87rem; }
+  /* capacity statement cards */
+  .cap-grid { display: grid; gap: 8px; }
+  .cap-card { display: flex; gap: 11px; align-items: flex-start; border: 1.5px solid var(--line); border-radius: 10px; padding: 11px 13px; cursor: pointer; background: var(--card); }
+  .cap-card:hover { border-color: var(--accent); }
+  .cap-card.sel { border-color: var(--accent); background: var(--accent-soft); }
+  .cap-card.na { border-style: dashed; opacity: 0.85; }
+  .cap-card.na .cap-text { color: var(--muted); font-style: italic; }
+  .cap-badge { flex-shrink: 0; font-family: ui-monospace, monospace; font-weight: 700; font-size: 0.7rem; color: #fff; border-radius: 5px; padding: 3px 7px; margin-top: 2px; }
+  .cap-badge.b0 { background: var(--l0); color: #44403c; }
+  .cap-badge.b1 { background: var(--l1); color: #1e1b4b; }
+  .cap-badge.b2 { background: var(--l2); }
+  .cap-badge.b3 { background: var(--l3); }
+  .cap-badge.bna { background: var(--na); color: #57534e; border: 1px dashed #a8a29e; }
+  .cap-text { font-size: 0.86rem; }
+  /* advisor artifacts */
+  .prefill-note { display: none; margin-top: 7px; background: #fffbeb; border-left: 3px solid var(--warn); border-radius: 0 8px 8px 0; padding: 7px 11px; font-size: 0.8rem; color: #713f12; }
+  .prefill-note[contenteditable] { outline: none; }
+  .grade-chip { display: none; font-family: ui-monospace, monospace; font-weight: 700; font-size: 0.68rem; border-radius: 4px; padding: 1px 7px; margin-left: 7px; color: #fff; }
+  .grade-chip.g-A { background: var(--grade-a); } .grade-chip.g-B { background: var(--grade-b); }
+  .grade-chip.g-C { background: var(--grade-c); } .grade-chip.g-X { background: var(--grade-x); }
+  body.advisor .prefill-note.filled { display: block; }
+  body.advisor .grade-chip.filled { display: inline-block; }
+  .margin-note { display: none; margin-top: 16px; border-top: 1px dashed var(--line); padding-top: 12px; }
+  .margin-note label { font-size: 0.78rem; font-weight: 700; color: var(--warn); display: block; margin-bottom: 5px; }
+  body.advisor .margin-note { display: block; }
+  .adv-banner { display: none; background: var(--accent-soft); border: 1px solid var(--accent); color: var(--accent-deep); border-radius: 10px; padding: 9px 14px; font-size: 0.82rem; margin-bottom: 18px; }
+  body.advisor .adv-banner { display: block; }
+  /* results */
+  .verdict { text-align: center; padding: 14px 0 6px; }
+  .verdict .headline { font-size: 2rem; font-weight: 800; color: var(--accent-deep); }
+  .verdict .sub { color: var(--muted); font-size: 0.95rem; }
+  .dom-bars { margin: 18px 0; }
+  .dom-row { display: grid; grid-template-columns: 210px 1fr 64px; gap: 12px; align-items: center; margin-bottom: 8px; }
+  .dom-row .lbl { font-size: 0.87rem; font-weight: 600; }
+  .dom-row .lbl small { color: var(--muted); font-weight: 400; font-size: 0.72rem; }
+  .dom-row .track { background: var(--line); border-radius: 6px; height: 20px; overflow: hidden; }
+  .dom-row .fill { height: 100%; display: flex; align-items: center; padding-left: 9px; color: #fff; font-size: 0.75rem; font-weight: 700; transition: width 0.25s; }
+  .dom-row .val { font-weight: 700; text-align: right; font-size: 0.95rem; }
+  .flags { border-radius: 10px; padding: 14px 18px; margin: 16px 0; font-size: 0.87rem; }
+  .flags.some { background: #fffbeb; border-left: 4px solid var(--warn); }
+  .flags.none { background: #ecfdf5; border-left: 4px solid var(--ok); }
+  .flags ul { margin-left: 18px; }
+  .flags li { margin: 5px 0; }
+  .rf-id { font-family: ui-monospace, monospace; font-size: 0.72rem; background: var(--line); border-radius: 4px; padding: 0 5px; margin-right: 5px; }
+  .actions { display: flex; gap: 9px; flex-wrap: wrap; margin-top: 16px; }
+  .actions button { border: 1px solid var(--line); background: var(--card); border-radius: 9px; padding: 9px 16px; cursor: pointer; font-weight: 600; font-size: 0.85rem; }
+  .actions button.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+  footer.colophon { text-align: center; color: var(--muted); font-size: 0.75rem; padding: 30px 0 50px; }
+  @media (max-width: 860px) { .wrap { grid-template-columns: 1fr; } nav.rail { display: none; } }
+  @media print { .topbar, nav.rail, .actions { display: none !important; } section.block { break-inside: avoid; border: none; } }
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="brand">AIROI · Capacity Assessment<small data-en="AIROI Capacity Model (ACM) instrument · reference implementation" data-sk="Instrument AIROI Capacity Model (ACM) · referenčná implementácia">…</small></div>
+  <div class="spacer"></div>
+  <div class="mode-pill">
+    <button id="modeRespondent" class="on" data-en="Respondent" data-sk="Respondent">Respondent</button>
+    <button id="modeAdvisor" data-en="Advisor" data-sk="Poradca">Advisor</button>
+  </div>
+  <button class="tb-btn" id="importBtn" data-en="⤓ Import pack" data-sk="⤓ Import pack">…</button>
+  <input type="file" id="importFile" accept=".json" style="display:none">
+  <button class="tb-btn" id="langBtn">SK</button>
+  <button class="tb-btn" id="resetBtn" data-en="Reset" data-sk="Reset">…</button>
+</header>
+
+<div class="wrap">
+<nav class="rail" id="rail">
+  <a href="#s-context" data-en="1 · Context" data-sk="1 · Kontext">…</a>
+  <a href="#s-d1" data-en="2 · Direction &amp; Accountability" data-sk="2 · Smerovanie a zodpovednosť">…</a>
+  <a href="#s-d2" data-en="3 · People &amp; Adoption" data-sk="3 · Ľudia a adopcia">…</a>
+  <a href="#s-d3" data-en="4 · Data Readiness" data-sk="4 · Dátová pripravenosť">…</a>
+  <a href="#s-d4" data-en="5 · Delivery &amp; Integration" data-sk="5 · Doručovanie a integrácia">…</a>
+  <a href="#s-d5" data-en="6 · Trust &amp; Control" data-sk="6 · Dôvera a kontrola">…</a>
+  <a href="#s-d6" data-en="7 · Operations &amp; Learning" data-sk="7 · Prevádzka a učenie">…</a>
+  <a href="#s-results" data-en="8 · Results" data-sk="8 · Výsledky">…</a>
+</nav>
+
+<main>
+<div class="adv-banner" data-en="🔎 Advisor mode — evidence grades, rationale callouts and margin notes are visible. Never project this mode to the room (Principle P5)." data-sk="🔎 Advisor mód — evidence grades, rationale a margin notes sú viditeľné. Nikdy nepremietať do miestnosti (Princíp P5).">…</div>
+
+<!-- ═══ 1 · CONTEXT ═══ -->
+<section class="block" id="s-context">
+  <h2 data-en="1 · Context" data-sk="1 · Kontext">…</h2>
+  <p class="lead" data-en="Session metadata and the AI footprint being assessed." data-sk="Metadáta session a hodnotený AI footprint.">…</p>
+  <div class="q" data-field="ORG_NAME" data-type="text">
+    <label class="head"><span class="code-chip">ORG_NAME</span><span data-en="Organization" data-sk="Organizácia">…</span><span class="grade-chip"></span></label>
+    <input type="text"><div class="prefill-note" contenteditable="true"></div>
+  </div>
+  <div class="q" data-field="SESSION_DATE" data-type="text">
+    <label class="head"><span class="code-chip">SESSION_DATE</span><span data-en="Session date" data-sk="Dátum session">…</span><span class="grade-chip"></span></label>
+    <input type="text" placeholder="YYYY-MM-DD"><div class="prefill-note" contenteditable="true"></div>
+  </div>
+  <div class="q" data-field="PARTICIPANTS" data-type="text">
+    <label class="head"><span class="code-chip">PARTICIPANTS</span><span data-en="Participants (names + roles)" data-sk="Účastníci (mená + roly)">…</span><span class="grade-chip"></span></label>
+    <input type="text"><div class="prefill-note" contenteditable="true"></div>
+  </div>
+  <div class="q" data-field="AI_FOOTPRINT" data-type="single">
+    <label class="head"><span class="code-chip">AI_FOOTPRINT</span><span data-en="Current AI footprint" data-sk="Aktuálny AI footprint">…</span><span class="grade-chip"></span></label>
+    <div class="opts">
+      <div class="opt" data-v="none"><b data-en="No AI yet" data-sk="Zatiaľ žiadna AI">…</b></div>
+      <div class="opt" data-v="pilots"><b data-en="Pilots / experiments" data-sk="Piloty / experimenty">…</b></div>
+      <div class="opt" data-v="departmental"><b data-en="Departmental" data-sk="Na úrovni útvarov">…</b></div>
+      <div class="opt" data-v="organization_wide"><b data-en="Organization-wide" data-sk="Celoorganizačný">…</b></div>
+    </div>
+    <div class="prefill-note" contenteditable="true"></div>
+  </div>
+  <div class="q" data-field="AI_ARCHETYPES" data-type="multi">
+    <label class="head"><span class="code-chip">AI_ARCHETYPES</span><span data-en="AI archetypes in use" data-sk="Používané AI archetypy">…</span><span class="grade-chip"></span></label>
+    <div class="opts">
+      <div class="opt multi" data-v="automation"><b data-en="Automation (autonomous actions)" data-sk="Automatizácia (autonómne úkony)">…</b></div>
+      <div class="opt multi" data-v="augmentation"><b data-en="Augmentation (human-assist)" data-sk="Augmentácia (asistencia človeku)">…</b></div>
+      <div class="opt multi" data-v="analytics"><b data-en="Analytics (prediction, scoring)" data-sk="Analytika (predikcia, skóring)">…</b></div>
+      <div class="opt multi" data-v="generation"><b data-en="Generation (content, code)" data-sk="Generovanie (obsah, kód)">…</b></div>
+      <div class="opt multi" data-v="none"><b data-en="None" data-sk="Žiadne">…</b></div>
+    </div>
+    <div class="prefill-note" contenteditable="true"></div>
+  </div>
+  <div class="q" data-field="REGULATORY_FRAMES" data-type="multi">
+    <label class="head"><span class="code-chip">REGULATORY_FRAMES</span><span data-en="Applicable regulatory frames" data-sk="Aplikovateľné regulačné rámce">…</span><span class="grade-chip"></span></label>
+    <div class="opts">
+      <div class="opt multi" data-v="privacy"><b data-en="Privacy regulation" data-sk="Regulácia súkromia">…</b></div>
+      <div class="opt multi" data-v="ai_regulation"><b data-en="AI regulation" data-sk="AI regulácia">…</b></div>
+      <div class="opt multi" data-v="cyber"><b data-en="Cybersecurity / resilience" data-sk="Kyberbezpečnosť / odolnosť">…</b></div>
+      <div class="opt multi" data-v="sectoral"><b data-en="Sectoral regimes" data-sk="Sektorové režimy">…</b></div>
+      <div class="opt multi" data-v="none"><b data-en="None significant" data-sk="Žiadne významné">…</b></div>
+    </div>
+    <div class="prefill-note" contenteditable="true"></div>
+  </div>
+  <div class="margin-note" data-note="1"><label data-en="Margin note — context" data-sk="Margin note — kontext">…</label><textarea></textarea></div>
+</section>
+
+<section class="block" id="s-d1">
+  <h2><span class="dom-tag">D1</span> <span data-en="Direction &amp; Accountability" data-sk="Smerovanie a zodpovednosť">…</span></h2>
+  <p class="lead" data-en="NIST grounding: GOVERN (policies, accountability, oversight)" data-sk="NIST ukotvenie: GOVERN (policies, accountability, oversight)">…</p>
+  <div class="q" data-field="VALUE_OWNERSHIP" data-type="capacity" data-domain="D1">
+    <label class="head"><span class="code-chip">VALUE_OWNERSHIP</span><span data-en="Value ownership" data-sk="Vlastníctvo hodnoty">…</span><span class="grade-chip"></span></label>
+    <div class="cap-grid">
+      <div class="cap-card" data-v="0"><span class="cap-badge b0">L0</span><span class="cap-text" data-en="Not in place — no practice or awareness in this area." data-sk="Nie je zavedené — žiadna prax ani povedomie v tejto oblasti.">…</span></div>
+      <div class="cap-card" data-v="1"><span class="cap-badge b1">L1</span><span class="cap-text" data-en="Someone informally champions AI topics; decisions about AI value and risk are made case by case without defined rights." data-sk="AI témy niekto neformálne presadzuje; rozhodnutia o hodnote a riziku AI sa robia prípad od prípadu bez definovaných práv.">…</span></div>
+      <div class="cap-card" data-v="2"><span class="cap-badge b2">L2</span><span class="cap-text" data-en="A named owner holds the AI value-and-risk mandate, with defined decision rights and a regular review rhythm." data-sk="Menovaný vlastník drží mandát za hodnotu a riziko AI, s definovanými rozhodovacími právami a pravidelným review rytmom.">…</span></div>
+      <div class="cap-card" data-v="3"><span class="cap-badge b3">L3</span><span class="cap-text" data-en="Ownership is embedded across the portfolio: value and risk decisions are traceable, reviewed against outcomes, and adjusted." data-sk="Vlastníctvo je zabudované naprieč portfóliom: rozhodnutia o hodnote a riziku sú sledovateľné, revidované voči výsledkom a upravované.">…</span></div>
+      <div class="cap-card na" data-v="na"><span class="cap-badge bna">N/A</span><span class="cap-text" data-en="Not applicable to the assessed scope." data-sk="Netýka sa hodnoteného rozsahu.">…</span></div>
+    </div>
+    <div class="prefill-note" contenteditable="true"></div>
+  </div>
+  <div class="q" data-field="POLICY_GUARDRAILS" data-type="capacity" data-domain="D1">
+    <label class="head"><span class="code-chip">POLICY_GUARDRAILS</span><span data-en="Policy &amp; guardrails" data-sk="Politika a mantinely">…</span><span class="grade-chip"></span></label>
+    <div class="cap-grid">
+      <div class="cap-card" data-v="0"><span class="cap-badge b0">L0</span><span class="cap-text" data-en="Not in place — no practice or awareness in this area." data-sk="Nie je zavedené — žiadna prax ani povedomie v tejto oblasti.">…</span></div>
+      <div class="cap-card" data-v="1"><span class="cap-badge b1">L1</span><span class="cap-text" data-en="Expectations for acceptable AI use circulate informally; approvals happen ad hoc." data-sk="Očakávania o prijateľnom použití AI kolujú neformálne; schvaľovanie prebieha ad hoc.">…</span></div>
+      <div class="cap-card" data-v="2"><span class="cap-badge b2">L2</span><span class="cap-text" data-en="A published AI policy defines acceptable use, approval paths, and escalation; exceptions are recorded." data-sk="Publikovaná AI politika definuje prijateľné použitie, schvaľovacie cesty a eskaláciu; výnimky sa evidujú.">…</span></div>
+      <div class="cap-card" data-v="3"><span class="cap-badge b3">L3</span><span class="cap-text" data-en="Policy is a living system: measured for compliance and friction, revised on evidence, and understood across roles." data-sk="Politika je živý systém: meria sa jej dodržiavanie aj trenie, reviduje sa na základe evidencie a rozumejú jej všetky roly.">…</span></div>
+      <div class="cap-card na" data-v="na"><span class="cap-badge bna">N/A</span><span class="cap-text" data-en="Not applicable to the assessed scope." data-sk="Netýka sa hodnoteného rozsahu.">…</span></div>
+    </div>
+    <div class="prefill-note" contenteditable="true"></div>
+  </div>
+  <div class="q" data-field="STRATEGY_LINKAGE" data-type="capacity" data-domain="D1">
+    <label class="head"><span class="code-chip">STRATEGY_LINKAGE</span><span data-en="Strategy linkage" data-sk="Väzba na stratégiu">…</span><span class="grade-chip"></span></label>
+    <div class="cap-grid">
+      <div class="cap-card" data-v="0"><span class="cap-badge b0">L0</span><span class="cap-text" data-en="Not in place — no practice or awareness in this area." data-sk="Nie je zavedené — žiadna prax ani povedomie v tejto oblasti.">…</span></div>
+      <div class="cap-card" data-v="1"><span class="cap-badge b1">L1</span><span class="cap-text" data-en="AI initiatives start opportunistically; links to business goals are asserted, not traced." data-sk="AI iniciatívy vznikajú oportunisticky; väzba na biznis ciele sa tvrdí, ale nesleduje.">…</span></div>
+      <div class="cap-card" data-v="2"><span class="cap-badge b2">L2</span><span class="cap-text" data-en="Every funded AI initiative names the business goal it serves and its expected contribution; a portfolio view exists." data-sk="Každá financovaná AI iniciatíva menuje biznis cieľ, ktorému slúži, a očakávaný prínos; existuje portfóliový pohľad.">…</span></div>
+      <div class="cap-card" data-v="3"><span class="cap-badge b3">L3</span><span class="cap-text" data-en="The AI portfolio is steered by realized contribution: funding follows measured value, and misaligned initiatives are stopped." data-sk="AI portfólio sa riadi realizovaným prínosom: financovanie nasleduje meranú hodnotu a nezladené iniciatívy sa zastavujú.">…</span></div>
+      <div class="cap-card na" data-v="na"><span class="cap-badge bna">N/A</span><span class="cap-text" data-en="Not applicable to the assessed scope." data-sk="Netýka sa hodnoteného rozsahu.">…</span></div>
+    </div>
+    <div class="prefill-note" contenteditable="true"></div>
+  </div>
+  <div class="margin-note" data-note="2"><label data-en="Margin note — D1" data-sk="Margin note — D1">…</label><textarea></textarea></div>
+</section>
+
+<section class="block" id="s-d2">
+  <h2><span class="dom-tag">D2</span> <span data-en="People &amp; Adoption" data-sk="Ľudia a adopcia">…</span></h2>
+  <p class="lead" data-en="NIST grounding: GOVERN (culture, workforce) + MANAGE (human oversight)" data-sk="NIST ukotvenie: GOVERN (culture, workforce) + MANAGE (human oversight)">…</p>
+  <div class="q" data-field="LITERACY_SKILLS" data-type="capacity" data-domain="D2">
+    <label class="head"><span class="code-chip">LITERACY_SKILLS</span><span data-en="Literacy &amp; skills" data-sk="Gramotnosť a zručnosti">…</span><span class="grade-chip"></span></label>
+    <div class="cap-grid">
+      <div class="cap-card" data-v="0"><span class="cap-badge b0">L0</span><span class="cap-text" data-en="Not in place — no practice or awareness in this area." data-sk="Nie je zavedené — žiadna prax ani povedomie v tejto oblasti.">…</span></div>
+      <div class="cap-card" data-v="1"><span class="cap-badge b1">L1</span><span class="cap-text" data-en="AI competence is concentrated in a few self-taught individuals." data-sk="AI kompetencia je sústredená v niekoľkých samoukoch.">…</span></div>
+      <div class="cap-card" data-v="2"><span class="cap-badge b2">L2</span><span class="cap-text" data-en="Role-appropriate AI training exists, and required skill profiles are defined for affected roles." data-sk="Existuje AI tréning primeraný rolám a pre dotknuté roly sú definované požadované profily zručností.">…</span></div>
+      <div class="cap-card" data-v="3"><span class="cap-badge b3">L3</span><span class="cap-text" data-en="Skills are measured and renewed continuously; competence development anticipates upcoming AI use rather than trailing it." data-sk="Zručnosti sa merajú a kontinuálne obnovujú; rozvoj kompetencií predbieha budúce použitie AI, nezaostáva za ním.">…</span></div>
+      <div class="cap-card na" data-v="na"><span class="cap-badge bna">N/A</span><span class="cap-text" data-en="Not applicable to the assessed scope." data-sk="Netýka sa hodnoteného rozsahu.">…</span></div>
+    </div>
+    <div class="prefill-note" contenteditable="true"></div>
+  </div>
+  <div class="q" data-field="ADOPTION_INCENTIVES" data-type="capacity" data-domain="D2">
+    <label class="head"><span class="code-chip">ADOPTION_INCENTIVES</span><span data-en="Adoption &amp; incentives" data-sk="Adopcia a motivácia">…</span><span class="grade-chip"></span></label>
+    <div class="cap-grid">
+      <div class="cap-card" data-v="0"><span class="cap-badge b0">L0</span><span class="cap-text" data-en="Not in place — no practice or awareness in this area." data-sk="Nie je zavedené — žiadna prax ani povedomie v tejto oblasti.">…</span></div>
+      <div class="cap-card" data-v="1"><span class="cap-badge b1">L1</span><span class="cap-text" data-en="Available AI tools are used unevenly; adoption depends on personal enthusiasm." data-sk="Dostupné AI nástroje sa používajú nerovnomerne; adopcia závisí od osobného nadšenia.">…</span></div>
+      <div class="cap-card" data-v="2"><span class="cap-badge b2">L2</span><span class="cap-text" data-en="Adoption is tracked, champions are named, and incentives do not punish honest use (such as disclosing AI assistance)." data-sk="Adopcia sa sleduje, champions sú menovaní a motivačný systém netrestá poctivé použitie (napr. priznanie AI asistencie).">…</span></div>
+      <div class="cap-card" data-v="3"><span class="cap-badge b3">L3</span><span class="cap-text" data-en="Adoption data drives enablement: friction is measured and removed, and the value of usage is visible to users themselves." data-sk="Dáta o adopcii riadia enablement: trenie sa meria a odstraňuje a hodnota používania je viditeľná samotným používateľom.">…</span></div>
+      <div class="cap-card na" data-v="na"><span class="cap-badge bna">N/A</span><span class="cap-text" data-en="Not applicable to the assessed scope." data-sk="Netýka sa hodnoteného rozsahu.">…</span></div>
+    </div>
+    <div class="prefill-note" contenteditable="true"></div>
+  </div>
+  <div class="q" data-field="SAFE_USE_CULTURE" data-type="capacity" data-domain="D2">
+    <label class="head"><span class="code-chip">SAFE_USE_CULTURE</span><span data-en="Safe-use culture" data-sk="Kultúra bezpečného použitia">…</span><span class="grade-chip"></span></label>
+    <div class="cap-grid">
+      <div class="cap-card" data-v="0"><span class="cap-badge b0">L0</span><span class="cap-text" data-en="Not in place — no practice or awareness in this area." data-sk="Nie je zavedené — žiadna prax ani povedomie v tejto oblasti.">…</span></div>
+      <div class="cap-card" data-v="1"><span class="cap-badge b1">L1</span><span class="cap-text" data-en="People experiment quietly; problems with AI outputs are handled privately or not raised." data-sk="Ľudia experimentujú potichu; problémy s AI výstupmi sa riešia súkromne alebo sa nenahlasujú.">…</span></div>
+      <div class="cap-card" data-v="2"><span class="cap-badge b2">L2</span><span class="cap-text" data-en="Clear reporting paths exist for AI issues and near-misses; raising them carries no penalty." data-sk="Existujú jasné cesty na hlásenie AI problémov a skoro-incidentov; ich nahlásenie nenesie postih.">…</span></div>
+      <div class="cap-card" data-v="3"><span class="cap-badge b3">L3</span><span class="cap-text" data-en="Surfacing AI limitations is rewarded and routine; lessons circulate openly and change practice." data-sk="Odhaľovanie limitov AI je odmeňované a rutinné; poučenia kolujú otvorene a menia prax.">…</span></div>
+      <div class="cap-card na" data-v="na"><span class="cap-badge bna">N/A</span><span class="cap-text" data-en="Not applicable to the assessed scope." data-sk="Netýka sa hodnoteného rozsahu.">…</span></div>
+    </div>
+    <div class="prefill-note" contenteditable="true"></div>
+  </div>
+  <div class="margin-note" data-note="3"><label data-en="Margin note — D2" data-sk="Margin note — D2">…</label><textarea></textarea></div>
+</section>
+
+<section class="block" id="s-d3">
+  <h2><span class="dom-tag">D3</span> <span data-en="Data Readiness" data-sk="Dátová pripravenosť">…</span></h2>
+  <p class="lead" data-en="NIST grounding: MAP (context, data) + MEASURE (privacy-enhanced)" data-sk="NIST ukotvenie: MAP (context, data) + MEASURE (privacy-enhanced)">…</p>
+  <div class="q" data-field="DATA_ACCESS" data-type="capacity" data-domain="D3">
+    <label class="head"><span class="code-chip">DATA_ACCESS</span><span data-en="Availability &amp; access" data-sk="Dostupnosť a prístup">…</span><span class="grade-chip"></span></label>
+    <div class="cap-grid">
+      <div class="cap-card" data-v="0"><span class="cap-badge b0">L0</span><span class="cap-text" data-en="Not in place — no practice or awareness in this area." data-sk="Nie je zavedené — žiadna prax ani povedomie v tejto oblasti.">…</span></div>
+      <div class="cap-card" data-v="1"><span class="cap-badge b1">L1</span><span class="cap-text" data-en="Data for AI purposes is obtained through personal contacts and one-off extracts." data-sk="Dáta pre AI účely sa získavajú cez osobné kontakty a jednorazové exporty.">…</span></div>
+      <div class="cap-card" data-v="2"><span class="cap-badge b2">L2</span><span class="cap-text" data-en="Governed access paths exist for the data AI work needs, with defined roles and turnaround." data-sk="Pre dáta potrebné na AI prácu existujú riadené prístupové cesty s definovanými rolami a lehotami.">…</span></div>
+      <div class="cap-card" data-v="3"><span class="cap-badge b3">L3</span><span class="cap-text" data-en="Data products are discoverable and reusable; access is fast, audited, and fit for production AI." data-sk="Dátové produkty sú vyhľadateľné a znovupoužiteľné; prístup je rýchly, auditovaný a vhodný pre produkčnú AI.">…</span></div>
+      <div class="cap-card na" data-v="na"><span class="cap-badge bna">N/A</span><span class="cap-text" data-en="Not applicable to the assessed scope." data-sk="Netýka sa hodnoteného rozsahu.">…</span></div>
+    </div>
+    <div class="prefill-note" contenteditable="true"></div>
+  </div>
+  <div class="q" data-field="DATA_STEWARDSHIP" data-type="capacity" data-domain="D3">
+    <label class="head"><span class="code-chip">DATA_STEWARDSHIP</span><span data-en="Quality &amp; stewardship" data-sk="Kvalita a stewardship">…</span><span class="grade-chip"></span></label>
+    <div class="cap-grid">
+      <div class="cap-card" data-v="0"><span class="cap-badge b0">L0</span><span class="cap-text" data-en="Not in place — no practice or awareness in this area." data-sk="Nie je zavedené — žiadna prax ani povedomie v tejto oblasti.">…</span></div>
+      <div class="cap-card" data-v="1"><span class="cap-badge b1">L1</span><span class="cap-text" data-en="Data quality is discovered at the point of failure; no named stewards exist." data-sk="Kvalita dát sa zisťuje až pri zlyhaní; neexistujú menovaní stewardi.">…</span></div>
+      <div class="cap-card" data-v="2"><span class="cap-badge b2">L2</span><span class="cap-text" data-en="Critical data sets have named stewards, measured quality, and known lineage." data-sk="Kritické datasety majú menovaných stewardov, meranú kvalitu a známy pôvod (lineage).">…</span></div>
+      <div class="cap-card" data-v="3"><span class="cap-badge b3">L3</span><span class="cap-text" data-en="Quality management is preventive: measured continuously, improved at the source, and trusted by AI consumers." data-sk="Riadenie kvality je preventívne: meria sa kontinuálne, zlepšuje pri zdroji a AI konzumenti mu dôverujú.">…</span></div>
+      <div class="cap-card na" data-v="na"><span class="cap-badge bna">N/A</span><span class="cap-text" data-en="Not applicable to the assessed scope." data-sk="Netýka sa hodnoteného rozsahu.">…</span></div>
+    </div>
+    <div class="prefill-note" contenteditable="true"></div>
+  </div>
+  <div class="q" data-field="DATA_PROTECTION" data-type="capacity" data-domain="D3">
+    <label class="head"><span class="code-chip">DATA_PROTECTION</span><span data-en="Protection &amp; privacy" data-sk="Ochrana a súkromie">…</span><span class="grade-chip"></span></label>
+    <div class="cap-grid">
+      <div class="cap-card" data-v="0"><span class="cap-badge b0">L0</span><span class="cap-text" data-en="Not in place — no practice or awareness in this area." data-sk="Nie je zavedené — žiadna prax ani povedomie v tejto oblasti.">…</span></div>
+      <div class="cap-card" data-v="1"><span class="cap-badge b1">L1</span><span class="cap-text" data-en="Handling of personal and sensitive data in AI work relies on individual judgment." data-sk="Zaobchádzanie s osobnými a citlivými dátami v AI práci stojí na individuálnom úsudku.">…</span></div>
+      <div class="cap-card" data-v="2"><span class="cap-badge b2">L2</span><span class="cap-text" data-en="Defined rules govern sensitive data in AI contexts: minimization, retention, and approved processing paths." data-sk="Citlivé dáta v AI kontexte riadia definované pravidlá: minimalizácia, retencia a schválené spracovateľské cesty.">…</span></div>
+      <div class="cap-card" data-v="3"><span class="cap-badge b3">L3</span><span class="cap-text" data-en="Privacy-enhancing practice is built into AI data flows and verified, not asserted." data-sk="Privacy-enhancing prax je zabudovaná do AI dátových tokov a overuje sa, netvrdí sa.">…</span></div>
+      <div class="cap-card na" data-v="na"><span class="cap-badge bna">N/A</span><span class="cap-text" data-en="Not applicable to the assessed scope." data-sk="Netýka sa hodnoteného rozsahu.">…</span></div>
+    </div>
+    <div class="prefill-note" contenteditable="true"></div>
+  </div>
+  <div class="margin-note" data-note="4"><label data-en="Margin note — D3" data-sk="Margin note — D3">…</label><textarea></textarea></div>
+</section>
+
+<section class="block" id="s-d4">
+  <h2><span class="dom-tag">D4</span> <span data-en="Delivery &amp; Integration" data-sk="Doručovanie a integrácia">…</span></h2>
+  <p class="lead" data-en="NIST grounding: MAP (system context) + MANAGE (deployment)" data-sk="NIST ukotvenie: MAP (system context) + MANAGE (deployment)">…</p>
+  <div class="q" data-field="DEV_PRACTICE" data-type="capacity" data-domain="D4">
+    <label class="head"><span class="code-chip">DEV_PRACTICE</span><span data-en="Development practice" data-sk="Vývojová prax">…</span><span class="grade-chip"></span></label>
+    <div class="cap-grid">
+      <div class="cap-card" data-v="0"><span class="cap-badge b0">L0</span><span class="cap-text" data-en="Not in place — no practice or awareness in this area." data-sk="Nie je zavedené — žiadna prax ani povedomie v tejto oblasti.">…</span></div>
+      <div class="cap-card" data-v="1"><span class="cap-badge b1">L1</span><span class="cap-text" data-en="AI solutions are built as experiments that grow into production by accretion." data-sk="AI riešenia vznikajú ako experimenty, ktoré do produkcie prerastú postupným nabaľovaním.">…</span></div>
+      <div class="cap-card" data-v="2"><span class="cap-badge b2">L2</span><span class="cap-text" data-en="AI development follows an engineered path: versioning, evaluation before release, reproducible builds." data-sk="AI vývoj sleduje inžiniersku cestu: verzovanie, evaluácia pred vydaním, reprodukovateľné buildy.">…</span></div>
+      <div class="cap-card" data-v="3"><span class="cap-badge b3">L3</span><span class="cap-text" data-en="Delivery practice is measured and improving: evaluation harnesses, regression suites, and reuse across teams." data-sk="Delivery prax sa meria a zlepšuje: evaluačné harnessy, regresné sady a reuse naprieč tímami.">…</span></div>
+      <div class="cap-card na" data-v="na"><span class="cap-badge bna">N/A</span><span class="cap-text" data-en="Not applicable to the assessed scope." data-sk="Netýka sa hodnoteného rozsahu.">…</span></div>
+    </div>
+    <div class="prefill-note" contenteditable="true"></div>
+  </div>
+  <div class="q" data-field="DEPLOYMENT_RELEASE" data-type="capacity" data-domain="D4">
+    <label class="head"><span class="code-chip">DEPLOYMENT_RELEASE</span><span data-en="Deployment &amp; release" data-sk="Nasadzovanie a release">…</span><span class="grade-chip"></span></label>
+    <div class="cap-grid">
+      <div class="cap-card" data-v="0"><span class="cap-badge b0">L0</span><span class="cap-text" data-en="Not in place — no practice or awareness in this area." data-sk="Nie je zavedené — žiadna prax ani povedomie v tejto oblasti.">…</span></div>
+      <div class="cap-card" data-v="1"><span class="cap-badge b1">L1</span><span class="cap-text" data-en="AI changes reach users without a defined release step or rollback plan." data-sk="AI zmeny sa k používateľom dostávajú bez definovaného release kroku či rollback plánu.">…</span></div>
+      <div class="cap-card" data-v="2"><span class="cap-badge b2">L2</span><span class="cap-text" data-en="Controlled release paths exist: approval, staged rollout, rollback, and a record of what changed." data-sk="Existujú kontrolované release cesty: schválenie, postupný rollout, rollback a záznam zmien.">…</span></div>
+      <div class="cap-card" data-v="3"><span class="cap-badge b3">L3</span><span class="cap-text" data-en="Releases are routine and low-drama: automated checks, monitored rollouts, and rehearsed reversal." data-sk="Release sú rutinné a bez drámy: automatizované kontroly, monitorované rollouty a nacvičený návrat späť.">…</span></div>
+      <div class="cap-card na" data-v="na"><span class="cap-badge bna">N/A</span><span class="cap-text" data-en="Not applicable to the assessed scope." data-sk="Netýka sa hodnoteného rozsahu.">…</span></div>
+    </div>
+    <div class="prefill-note" contenteditable="true"></div>
+  </div>
+  <div class="q" data-field="PROCESS_INTEGRATION" data-type="capacity" data-domain="D4">
+    <label class="head"><span class="code-chip">PROCESS_INTEGRATION</span><span data-en="Process integration" data-sk="Procesná integrácia">…</span><span class="grade-chip"></span></label>
+    <div class="cap-grid">
+      <div class="cap-card" data-v="0"><span class="cap-badge b0">L0</span><span class="cap-text" data-en="Not in place — no practice or awareness in this area." data-sk="Nie je zavedené — žiadna prax ani povedomie v tejto oblasti.">…</span></div>
+      <div class="cap-card" data-v="1"><span class="cap-badge b1">L1</span><span class="cap-text" data-en="AI tools sit beside the process; usage is optional and outcomes are untracked." data-sk="AI nástroje stoja vedľa procesu; použitie je dobrovoľné a výsledky sa nesledujú.">…</span></div>
+      <div class="cap-card" data-v="2"><span class="cap-badge b2">L2</span><span class="cap-text" data-en="AI is embedded in defined process steps with owners; the process description reflects it." data-sk="AI je zabudovaná do definovaných procesných krokov s vlastníkmi; popis procesu to odráža.">…</span></div>
+      <div class="cap-card" data-v="3"><span class="cap-badge b3">L3</span><span class="cap-text" data-en="Process and AI evolve together: process metrics capture AI contribution, and process owners steer further integration." data-sk="Proces a AI sa vyvíjajú spolu: procesné metriky zachytávajú prínos AI a vlastníci procesov riadia ďalšiu integráciu.">…</span></div>
+      <div class="cap-card na" data-v="na"><span class="cap-badge bna">N/A</span><span class="cap-text" data-en="Not applicable to the assessed scope." data-sk="Netýka sa hodnoteného rozsahu.">…</span></div>
+    </div>
+    <div class="prefill-note" contenteditable="true"></div>
+  </div>
+  <div class="margin-note" data-note="5"><label data-en="Margin note — D4" data-sk="Margin note — D4">…</label><textarea></textarea></div>
+</section>
+
+<section class="block" id="s-d5">
+  <h2><span class="dom-tag">D5</span> <span data-en="Trust &amp; Control" data-sk="Dôvera a kontrola">…</span></h2>
+  <p class="lead" data-en="NIST grounding: MAP (risk identification) + MEASURE (trustworthiness evaluation)" data-sk="NIST ukotvenie: MAP (risk identification) + MEASURE (trustworthiness evaluation)">…</p>
+  <div class="q" data-field="RISK_IDENTIFICATION" data-type="capacity" data-domain="D5">
+    <label class="head"><span class="code-chip">RISK_IDENTIFICATION</span><span data-en="Risk identification" data-sk="Identifikácia rizík">…</span><span class="grade-chip"></span></label>
+    <div class="cap-grid">
+      <div class="cap-card" data-v="0"><span class="cap-badge b0">L0</span><span class="cap-text" data-en="Not in place — no practice or awareness in this area." data-sk="Nie je zavedené — žiadna prax ani povedomie v tejto oblasti.">…</span></div>
+      <div class="cap-card" data-v="1"><span class="cap-badge b1">L1</span><span class="cap-text" data-en="Risks of AI use cases are considered informally, if at all, at build time." data-sk="Riziká AI use cases sa zvažujú neformálne, ak vôbec, a to počas vývoja.">…</span></div>
+      <div class="cap-card" data-v="2"><span class="cap-badge b2">L2</span><span class="cap-text" data-en="Each AI use case is risk-assessed in its context before deployment, with stakes classified." data-sk="Každý AI use case má pred nasadením posúdené riziká vo svojom kontexte a klasifikovanú závažnosť.">…</span></div>
+      <div class="cap-card" data-v="3"><span class="cap-badge b3">L3</span><span class="cap-text" data-en="Risk pictures stay current across the lifecycle and drive proportionate controls per use case." data-sk="Obraz rizík ostáva aktuálny naprieč lifecycle a riadi primerané kontroly per use case.">…</span></div>
+      <div class="cap-card na" data-v="na"><span class="cap-badge bna">N/A</span><span class="cap-text" data-en="Not applicable to the assessed scope." data-sk="Netýka sa hodnoteného rozsahu.">…</span></div>
+    </div>
+    <div class="prefill-note" contenteditable="true"></div>
+  </div>
+  <div class="q" data-field="VALIDATION_TESTING" data-type="capacity" data-domain="D5">
+    <label class="head"><span class="code-chip">VALIDATION_TESTING</span><span data-en="Validation &amp; testing" data-sk="Validácia a testovanie">…</span><span class="grade-chip"></span></label>
+    <div class="cap-grid">
+      <div class="cap-card" data-v="0"><span class="cap-badge b0">L0</span><span class="cap-text" data-en="Not in place — no practice or awareness in this area." data-sk="Nie je zavedené — žiadna prax ani povedomie v tejto oblasti.">…</span></div>
+      <div class="cap-card" data-v="1"><span class="cap-badge b1">L1</span><span class="cap-text" data-en="AI outputs are checked by trying things out; there is no systematic pre-deployment evaluation." data-sk="AI výstupy sa kontrolujú skúšaním; systematická evaluácia pred nasadením neexistuje.">…</span></div>
+      <div class="cap-card" data-v="2"><span class="cap-badge b2">L2</span><span class="cap-text" data-en="Pre-deployment validation is defined and applied: performance, robustness, and bias appropriate to stakes." data-sk="Validácia pred nasadením je definovaná a aplikovaná: výkon, robustnosť a bias primerane závažnosti.">…</span></div>
+      <div class="cap-card" data-v="3"><span class="cap-badge b3">L3</span><span class="cap-text" data-en="Validation is continuous and evidence-based; results gate releases and feed improvement." data-sk="Validácia je kontinuálna a evidence-based; výsledky podmieňujú release a živia zlepšovanie.">…</span></div>
+      <div class="cap-card na" data-v="na"><span class="cap-badge bna">N/A</span><span class="cap-text" data-en="Not applicable to the assessed scope." data-sk="Netýka sa hodnoteného rozsahu.">…</span></div>
+    </div>
+    <div class="prefill-note" contenteditable="true"></div>
+  </div>
+  <div class="q" data-field="TRANSPARENCY_RECOURSE" data-type="capacity" data-domain="D5">
+    <label class="head"><span class="code-chip">TRANSPARENCY_RECOURSE</span><span data-en="Transparency &amp; recourse" data-sk="Transparentnosť a náprava">…</span><span class="grade-chip"></span></label>
+    <div class="cap-grid">
+      <div class="cap-card" data-v="0"><span class="cap-badge b0">L0</span><span class="cap-text" data-en="Not in place — no practice or awareness in this area." data-sk="Nie je zavedené — žiadna prax ani povedomie v tejto oblasti.">…</span></div>
+      <div class="cap-card" data-v="1"><span class="cap-badge b1">L1</span><span class="cap-text" data-en="How AI systems reach outputs is not documented; affected people have no defined recourse." data-sk="Ako AI systémy dospievajú k výstupom, nie je dokumentované; dotknutí ľudia nemajú definovanú cestu nápravy.">…</span></div>
+      <div class="cap-card" data-v="2"><span class="cap-badge b2">L2</span><span class="cap-text" data-en="Documentation matches stakes; affected users know when AI is involved and how to contest outcomes." data-sk="Dokumentácia zodpovedá závažnosti; dotknutí používatelia vedia, kedy je AI v hre a ako výstup napadnúť.">…</span></div>
+      <div class="cap-card" data-v="3"><span class="cap-badge b3">L3</span><span class="cap-text" data-en="Transparency is verified in practice: explanations are usable, and recourse paths are exercised and measured." data-sk="Transparentnosť sa overuje v praxi: vysvetlenia sú použiteľné a cesty nápravy sa reálne používajú a merajú.">…</span></div>
+      <div class="cap-card na" data-v="na"><span class="cap-badge bna">N/A</span><span class="cap-text" data-en="Not applicable to the assessed scope." data-sk="Netýka sa hodnoteného rozsahu.">…</span></div>
+    </div>
+    <div class="prefill-note" contenteditable="true"></div>
+  </div>
+  <div class="margin-note" data-note="6"><label data-en="Margin note — D5" data-sk="Margin note — D5">…</label><textarea></textarea></div>
+</section>
+
+<section class="block" id="s-d6">
+  <h2><span class="dom-tag">D6</span> <span data-en="Operations &amp; Learning" data-sk="Prevádzka a učenie">…</span></h2>
+  <p class="lead" data-en="NIST grounding: MANAGE (monitoring, third parties, decommissioning) + GOVERN (supply-chain policy)" data-sk="NIST ukotvenie: MANAGE (monitoring, third parties, decommissioning) + GOVERN (supply-chain policy)">…</p>
+  <div class="q" data-field="MONITORING_INCIDENTS" data-type="capacity" data-domain="D6">
+    <label class="head"><span class="code-chip">MONITORING_INCIDENTS</span><span data-en="Monitoring &amp; incidents" data-sk="Monitoring a incidenty">…</span><span class="grade-chip"></span></label>
+    <div class="cap-grid">
+      <div class="cap-card" data-v="0"><span class="cap-badge b0">L0</span><span class="cap-text" data-en="Not in place — no practice or awareness in this area." data-sk="Nie je zavedené — žiadna prax ani povedomie v tejto oblasti.">…</span></div>
+      <div class="cap-card" data-v="1"><span class="cap-badge b1">L1</span><span class="cap-text" data-en="Production AI issues surface through user complaints." data-sk="Problémy produkčnej AI vyplávajú cez sťažnosti používateľov.">…</span></div>
+      <div class="cap-card" data-v="2"><span class="cap-badge b2">L2</span><span class="cap-text" data-en="AI systems in production are monitored (quality, drift, cost) with a defined incident path." data-sk="AI systémy v produkcii sa monitorujú (kvalita, drift, náklady) s definovanou incidentnou cestou.">…</span></div>
+      <div class="cap-card" data-v="3"><span class="cap-badge b3">L3</span><span class="cap-text" data-en="Operational signals predict issues before impact; incidents are exercised, and post-mortems change practice." data-sk="Prevádzkové signály predpovedajú problémy pred dopadom; incidenty sa cvičia a post-mortemy menia prax.">…</span></div>
+      <div class="cap-card na" data-v="na"><span class="cap-badge bna">N/A</span><span class="cap-text" data-en="Not applicable to the assessed scope." data-sk="Netýka sa hodnoteného rozsahu.">…</span></div>
+    </div>
+    <div class="prefill-note" contenteditable="true"></div>
+  </div>
+  <div class="q" data-field="THIRD_PARTIES" data-type="capacity" data-domain="D6">
+    <label class="head"><span class="code-chip">THIRD_PARTIES</span><span data-en="Third parties" data-sk="Tretie strany">…</span><span class="grade-chip"></span></label>
+    <div class="cap-grid">
+      <div class="cap-card" data-v="0"><span class="cap-badge b0">L0</span><span class="cap-text" data-en="Not in place — no practice or awareness in this area." data-sk="Nie je zavedené — žiadna prax ani povedomie v tejto oblasti.">…</span></div>
+      <div class="cap-card" data-v="1"><span class="cap-badge b1">L1</span><span class="cap-text" data-en="AI vendors and models are adopted individually without shared oversight." data-sk="AI vendori a modely sa preberajú individuálne bez spoločného dohľadu.">…</span></div>
+      <div class="cap-card" data-v="2"><span class="cap-badge b2">L2</span><span class="cap-text" data-en="Third-party AI (vendors, models, APIs) is inventoried and assessed against defined criteria." data-sk="Tretie strany v AI (vendori, modely, API) sú inventarizované a posudzované podľa definovaných kritérií.">…</span></div>
+      <div class="cap-card" data-v="3"><span class="cap-badge b3">L3</span><span class="cap-text" data-en="Supply-chain posture is actively managed: dependencies monitored, exit paths defined, terms renegotiated on evidence." data-sk="Dodávateľský reťazec sa aktívne riadi: závislosti sa monitorujú, exit cesty sú definované, podmienky sa vyjednávajú na základe evidencie.">…</span></div>
+      <div class="cap-card na" data-v="na"><span class="cap-badge bna">N/A</span><span class="cap-text" data-en="Not applicable to the assessed scope." data-sk="Netýka sa hodnoteného rozsahu.">…</span></div>
+    </div>
+    <div class="prefill-note" contenteditable="true"></div>
+  </div>
+  <div class="q" data-field="CONTINUOUS_LEARNING" data-type="capacity" data-domain="D6">
+    <label class="head"><span class="code-chip">CONTINUOUS_LEARNING</span><span data-en="Continuous learning" data-sk="Kontinuálne učenie">…</span><span class="grade-chip"></span></label>
+    <div class="cap-grid">
+      <div class="cap-card" data-v="0"><span class="cap-badge b0">L0</span><span class="cap-text" data-en="Not in place — no practice or awareness in this area." data-sk="Nie je zavedené — žiadna prax ani povedomie v tejto oblasti.">…</span></div>
+      <div class="cap-card" data-v="1"><span class="cap-badge b1">L1</span><span class="cap-text" data-en="What is learned from operating AI stays with the operators." data-sk="Čo sa prevádzka AI naučí, ostáva u operátorov.">…</span></div>
+      <div class="cap-card" data-v="2"><span class="cap-badge b2">L2</span><span class="cap-text" data-en="Feedback loops from operation to improvement are defined; retiring underperforming AI is a decision, not an accident." data-sk="Spätné väzby z prevádzky do zlepšovania sú definované; vyradenie nevýkonnej AI je rozhodnutie, nie náhoda.">…</span></div>
+      <div class="cap-card" data-v="3"><span class="cap-badge b3">L3</span><span class="cap-text" data-en="The organization learns as a system: operating evidence reshapes the portfolio, practices, and skills on a rhythm." data-sk="Organizácia sa učí ako systém: prevádzková evidencia v pravidelnom rytme pretvára portfólio, praktiky aj zručnosti.">…</span></div>
+      <div class="cap-card na" data-v="na"><span class="cap-badge bna">N/A</span><span class="cap-text" data-en="Not applicable to the assessed scope." data-sk="Netýka sa hodnoteného rozsahu.">…</span></div>
+    </div>
+    <div class="prefill-note" contenteditable="true"></div>
+  </div>
+  <div class="margin-note" data-note="7"><label data-en="Margin note — D6" data-sk="Margin note — D6">…</label><textarea></textarea></div>
+</section>
+
+<!-- ═══ 8 · RESULTS ═══ -->
+<section class="block" id="s-results">
+  <h2 data-en="8 · Results" data-sk="8 · Výsledky">…</h2>
+  <p class="lead" data-en="Per-domain capacity with honest annotations, red flags with catalog IDs (Spec 05), and exports. Scores are Return Equation inputs, never deliverables." data-sk="Kapacita per doména s poctivými anotáciami, red flags s katalógovými ID (Spec 05) a exporty. Skóre sú vstupy Return Equation, nie deliverables.">…</p>
+
+  <div class="verdict">
+    <div class="headline" id="overallScore">—</div>
+    <div class="sub" id="overallLabel">—</div>
+  </div>
+  <div class="dom-bars" id="domBars"></div>
+  <div id="flagsBox" class="flags none"></div>
+
+  <div class="actions">
+    <button class="primary" onclick="window.print()" data-en="🖨 Print / PDF" data-sk="🖨 Tlač / PDF">…</button>
+    <button onclick="exportEnvelope()" data-en="⇩ Export envelope (JSON)" data-sk="⇩ Export envelope (JSON)">…</button>
+    <button onclick="exportMarkdown()" data-en="⇩ Export Markdown" data-sk="⇩ Export Markdown">…</button>
+    <button onclick="copyMarkdown()" data-en="⧉ Copy Markdown" data-sk="⧉ Kopírovať Markdown">…</button>
+  </div>
+</section>
+
+<footer class="colophon">
+  AIROI Framework reference implementation · AIROI Capacity Model (ACM) · <span data-en="conforms to" data-sk="v súlade so">…</span> Spec 04 &amp; Spec 05 · CC-BY-SA 4.0
+</footer>
+</main>
+</div>
+
+<script>
+"use strict";
+const ACM = [{"id": "D1", "en": "Direction & Accountability", "sk": "Smerovanie a zodpovednosť", "subs": ["VALUE_OWNERSHIP", "POLICY_GUARDRAILS", "STRATEGY_LINKAGE"]}, {"id": "D2", "en": "People & Adoption", "sk": "Ľudia a adopcia", "subs": ["LITERACY_SKILLS", "ADOPTION_INCENTIVES", "SAFE_USE_CULTURE"]}, {"id": "D3", "en": "Data Readiness", "sk": "Dátová pripravenosť", "subs": ["DATA_ACCESS", "DATA_STEWARDSHIP", "DATA_PROTECTION"]}, {"id": "D4", "en": "Delivery & Integration", "sk": "Doručovanie a integrácia", "subs": ["DEV_PRACTICE", "DEPLOYMENT_RELEASE", "PROCESS_INTEGRATION"]}, {"id": "D5", "en": "Trust & Control", "sk": "Dôvera a kontrola", "subs": ["RISK_IDENTIFICATION", "VALIDATION_TESTING", "TRANSPARENCY_RECOURSE"]}, {"id": "D6", "en": "Operations & Learning", "sk": "Prevádzka a učenie", "subs": ["MONITORING_INCIDENTS", "THIRD_PARTIES", "CONTINUOUS_LEARNING"]}];
+const LS_KEY = "airoi_capacity_v1";
+const LANG_KEY = "airoi_lang";
+let S = {};
+let META = { grades: {}, notes: {}, margins: {} };
+try { const raw = localStorage.getItem(LS_KEY); if (raw) { const o = JSON.parse(raw); S = o.S || {}; META = o.META || META; } } catch (e) {}
+const save = () => { try { localStorage.setItem(LS_KEY, JSON.stringify({ S, META })); } catch (e) {} };
+
+/* i18n */
+let lang = localStorage.getItem(LANG_KEY) || "en";
+function applyLang() {
+  document.documentElement.lang = lang;
+  document.querySelectorAll("[data-en]").forEach(el => { const t = el.dataset[lang]; if (t) el.innerHTML = t; });
+  document.getElementById("langBtn").textContent = lang === "en" ? "SK" : "EN";
+  renderResults();
+}
+document.getElementById("langBtn").onclick = () => { lang = lang === "en" ? "sk" : "en"; localStorage.setItem(LANG_KEY, lang); applyLang(); };
+
+/* mode */
+function setMode(m) {
+  document.body.classList.toggle("advisor", m === "advisor");
+  document.getElementById("modeAdvisor").classList.toggle("on", m === "advisor");
+  document.getElementById("modeRespondent").classList.toggle("on", m === "respondent");
+}
+document.getElementById("modeAdvisor").onclick = () => setMode("advisor");
+document.getElementById("modeRespondent").onclick = () => setMode("respondent");
+
+/* binding */
+document.querySelectorAll(".q[data-field]").forEach(q => {
+  const code = q.dataset.field, type = q.dataset.type;
+  if (type === "text") {
+    const inp = q.querySelector("input[type=text]");
+    if (S[code] !== undefined) inp.value = S[code];
+    inp.addEventListener("input", () => { S[code] = inp.value; save(); });
+  }
+  if (type === "single") {
+    const opts = q.querySelectorAll(".opt");
+    opts.forEach(o => {
+      if (S[code] === o.dataset.v) o.classList.add("sel");
+      o.addEventListener("click", () => { opts.forEach(x => x.classList.remove("sel")); o.classList.add("sel"); S[code] = o.dataset.v; save(); renderResults(); });
+    });
+  }
+  if (type === "multi") {
+    const opts = q.querySelectorAll(".opt");
+    if (!Array.isArray(S[code])) S[code] = [];
+    opts.forEach(o => {
+      if (S[code].includes(o.dataset.v)) o.classList.add("sel");
+      o.addEventListener("click", () => { o.classList.toggle("sel"); S[code] = Array.from(q.querySelectorAll(".opt.sel")).map(x => x.dataset.v); save(); renderResults(); });
+    });
+  }
+  if (type === "capacity") {
+    const cards = q.querySelectorAll(".cap-card");
+    cards.forEach(c => {
+      if (S[code] === c.dataset.v) c.classList.add("sel");
+      c.addEventListener("click", () => { cards.forEach(x => x.classList.remove("sel")); c.classList.add("sel"); S[code] = c.dataset.v; save(); renderResults(); });
+    });
+  }
+  const note = q.querySelector(".prefill-note");
+  if (note) {
+    if (META.notes[code]) { note.textContent = META.notes[code]; note.classList.add("filled"); }
+    note.addEventListener("input", () => { META.notes[code] = note.textContent; save(); });
+  }
+  const chip = q.querySelector(".grade-chip");
+  if (chip && META.grades[code]) { chip.textContent = META.grades[code]; chip.className = "grade-chip filled g-" + META.grades[code]; }
+});
+document.querySelectorAll(".margin-note").forEach(m => {
+  const id = m.dataset.note, ta = m.querySelector("textarea");
+  if (META.margins[id]) ta.value = META.margins[id];
+  ta.addEventListener("input", () => { META.margins[id] = ta.value; save(); });
+});
+
+/* scoring */
+function classify(v) {
+  if (v === undefined || v === null || v === "") return { kind: "skip" };
+  if (v === "na") return { kind: "na" };
+  const n = parseInt(v, 10);
+  if (isNaN(n)) return { kind: "skip" };
+  return { kind: "level", n };
+}
+function perDomain() {
+  return ACM.map(d => {
+    let sum = 0, cnt = 0, l0 = 0, na = 0, skip = 0;
+    d.subs.forEach(code => {
+      const c = classify(S[code]);
+      if (c.kind === "na") na++;
+      else if (c.kind === "skip") skip++;
+      else { sum += c.n; cnt++; if (c.n === 0) l0++; }
+    });
+    return { id: d.id, en: d.en, sk: d.sk, avg: cnt ? sum / cnt : null, cnt, l0, na, skip, total: d.subs.length };
+  });
+}
+function overall() {
+  const per = perDomain();
+  const valid = per.filter(x => x.avg !== null);
+  const avg = valid.length ? valid.reduce((a, x) => a + x.avg, 0) / valid.length : null;
+  const skips = per.reduce((a, x) => a + x.skip, 0), nas = per.reduce((a, x) => a + x.na, 0);
+  const total = per.reduce((a, x) => a + x.total, 0);
+  return { per, avg, skips, nas, total };
+}
+function levelName(v, sk) {
+  if (v === null) return "—";
+  if (v < 0.5) return "Not in place";
+  if (v < 1.5) return "Emerging";
+  if (v < 2.5) return "Established";
+  return "Embedded";
+}
+function fillColor(v) { return v < 0.5 ? "var(--l0)" : v < 1.5 ? "var(--l1)" : v < 2.5 ? "var(--l2)" : "var(--l3)"; }
+
+/* red flags — Spec 05 IDs */
+function redFlags() {
+  const sk = lang === "sk", f = [];
+  const add = (id, en, skk) => f.push({ id, txt: sk ? skk : en });
+  const { per, avg, skips, nas, total } = overall();
+  const byId = {}; per.forEach(x => byId[x.id] = x);
+  const sub = code => classify(S[code]);
+  const D = (id) => byId[id] && byId[id].avg;
+
+  if (D("D4") !== null && D("D1") !== null && D("D4") >= 2 && (D("D4") - D("D1")) >= 1)
+    add("RF-10", "Delivery & Integration is well ahead of Direction & Accountability — shipping without policy.", "Delivery & Integration výrazne predbieha Direction & Accountability — nasadzuje sa bez politiky.");
+  const vt = sub("VALIDATION_TESTING");
+  if (D("D4") !== null && D("D4") >= 2 && vt.kind === "level" && vt.n <= 1)
+    add("RF-11", "Delivery maturity high while validation & testing is low — untested production AI.", "Delivery zrelosť vysoká pri nízkej validácii a testovaní — netestovaná produkčná AI.");
+  const dp = sub("DATA_PROTECTION");
+  if (dp.kind === "level" && dp.n <= 1 && (S.REGULATORY_FRAMES || []).includes("privacy"))
+    add("RF-12", "Data protection weak under a privacy regime — compliance exposure precedes any new AI initiative.", "Slabá ochrana dát pri privacy režime — compliance expozícia má prednosť pred novými AI iniciatívami.");
+  const tr = sub("TRANSPARENCY_RECOURSE"), ri = sub("RISK_IDENTIFICATION");
+  if ((S.REGULATORY_FRAMES || []).includes("ai_regulation") && ((tr.kind === "level" && tr.n <= 1) || (ri.kind === "level" && ri.n <= 1)))
+    add("RF-13", "Trust & Control weak while AI-specific regulation applies.", "Slabá Trust & Control vrstva pri platnej AI regulácii.");
+  if (D("D6") !== null && D("D6") < 1.5 && S.AI_FOOTPRINT === "organization_wide")
+    add("RF-14", "Operations & Learning low with an organization-wide AI footprint — incident exposure.", "Nízka Operations & Learning pri celoorganizačnom AI footprinte — incidentná expozícia.");
+  const avgs = per.filter(x => x.avg !== null).map(x => x.avg);
+  if (avgs.length >= 4) {
+    const m = avgs.reduce((a, b) => a + b, 0) / avgs.length;
+    const varc = avgs.reduce((a, b) => a + (b - m) ** 2, 0) / avgs.length;
+    if (varc > 0.6) add("RF-15", "Lopsided capacity across domains — the roadmap must coordinate progression.", "Nerovnomerná kapacita naprieč doménami — roadmapa musí koordinovať postup.");
+  }
+  if (avg !== null && avg < 0.8 && avgs.length >= 4)
+    add("RF-16", "Foundational capacity overall — a strategic program is needed, not point fixes.", "Celkovo foundational kapacita — treba strategický program, nie bodové fixy.");
+  if (avg !== null && avg >= 2 && S.AI_FOOTPRINT === "none")
+    add("RF-17", "High self-assessed capacity while no AI is in use — the instrument may have measured aspiration.", "Vysoká sebahodnotená kapacita bez používanej AI — instrument možno meral aspiráciu.");
+  ACM.forEach(d => {
+    const lv = d.subs.map(code => classify(S[code])).filter(c => c.kind === "level").map(c => c.n);
+    if (lv.length >= 2 && Math.max(...lv) === 3 && Math.min(...lv) === 0)
+      add("RF-18", `Cherry-picked capacity in ${d.id} — L3 next to L0 within one domain is unlikely; validate both ends.`, `Cherry-picked kapacita v ${d.id} — L3 vedľa L0 v jednej doméne je nepravdepodobné; validovať oba konce.`);
+  });
+  if (total && skips / total > 0.3)
+    add("RF-19", `Assessment incomplete: ${skips} of ${total} sub-capacities unanswered.`, `Assessment neúplný: ${skips} z ${total} sub-kapacít nezodpovedaných.`);
+  if (total && nas / total > 0.25)
+    add("RF-20", `High N/A share: ${nas} of ${total} — verify the model fits the assessed scope.`, `Vysoký podiel N/A: ${nas} z ${total} — overiť, či model sedí na hodnotený rozsah.`);
+  return f;
+}
+
+/* render */
+function renderResults() {
+  const sk = lang === "sk";
+  const { per, avg } = overall();
+  document.getElementById("overallScore").textContent = avg !== null ? avg.toFixed(2) + " / 3" : "—";
+  document.getElementById("overallLabel").textContent = avg !== null ? levelName(avg, sk) : "—";
+  document.getElementById("domBars").innerHTML = per.map(x => {
+    const meta = [];
+    if (x.l0) meta.push(`${x.l0}× L0`); if (x.na) meta.push(`${x.na}× N/A`); if (x.skip) meta.push(`${x.skip}× skip`);
+    const ms = meta.length ? ` <small>(${meta.join(", ")})</small>` : "";
+    const lbl = sk ? x.sk : x.en;
+    if (x.avg === null) return `<div class="dom-row"><div class="lbl">${x.id} · ${lbl}${ms}</div><div class="track"></div><div class="val" style="color:var(--muted)">—</div></div>`;
+    const w = Math.max(x.avg / 3 * 100, 4);
+    return `<div class="dom-row"><div class="lbl">${x.id} · ${lbl}${ms}</div><div class="track"><div class="fill" style="width:${w}%;background:${fillColor(x.avg)}">${x.avg.toFixed(2)}</div></div><div class="val">${x.avg.toFixed(2)}</div></div>`;
+  }).join("");
+  const flags = redFlags(), box = document.getElementById("flagsBox");
+  if (flags.length) {
+    box.className = "flags some";
+    box.innerHTML = `<b>Red flags (Spec 05):</b><ul>` + flags.map(x => `<li><span class="rf-id">${x.id}</span>${x.txt}</li>`).join("") + "</ul>";
+  } else {
+    box.className = "flags none";
+    box.innerHTML = `<b>${sk ? "Žiadne red flags — konzistentné odpovede." : "No red flags — answers are consistent."}</b>`;
+  }
+}
+
+/* envelope */
+document.getElementById("importBtn").onclick = () => document.getElementById("importFile").click();
+document.getElementById("importFile").addEventListener("change", ev => {
+  const file = ev.target.files[0]; if (!file) return;
+  const rd = new FileReader();
+  rd.onload = () => {
+    try {
+      const env = JSON.parse(rd.result);
+      if (!env.fields) throw new Error("no fields");
+      Object.entries(env.fields).forEach(([code, f]) => {
+        if (f.values !== undefined) S[code] = f.values;
+        else if (f.value !== undefined) S[code] = String(f.value);
+        if (f.confidence) META.grades[code] = f.confidence;
+        if (f.note) META.notes[code] = f.note;
+      });
+      if (env._meta && env._meta.margins) META.margins = { ...META.margins, ...env._meta.margins };
+      save(); location.reload();
+    } catch (e) { alert("Invalid envelope: " + e.message); }
+  };
+  rd.readAsText(file);
+});
+function buildEnvelope() {
+  const fields = {};
+  document.querySelectorAll(".q[data-field]").forEach(q => {
+    const code = q.dataset.field, type = q.dataset.type, f = {};
+    if (type === "multi") { if (Array.isArray(S[code]) && S[code].length) f.values = S[code]; }
+    else if (S[code] !== undefined && S[code] !== "") f.value = S[code];
+    if (META.grades[code]) f.confidence = META.grades[code];
+    if (META.notes[code]) f.note = META.notes[code];
+    if (Object.keys(f).length) fields[code] = f;
+  });
+  return { _meta: { schema_version: 1, instrument: "capacity-assessment", model: "ACM-0.1", generated: new Date().toISOString(), margins: META.margins }, fields };
+}
+function dl(name, text, mime) {
+  const b = new Blob([text], { type: mime }), u = URL.createObjectURL(b), a = document.createElement("a");
+  a.href = u; a.download = name; a.click(); URL.revokeObjectURL(u);
+}
+function exportEnvelope() { dl(`capacity_${(S.ORG_NAME || "org").replace(/\s+/g, "_")}.json`, JSON.stringify(buildEnvelope(), null, 2), "application/json"); }
+window.exportEnvelope = exportEnvelope;
+
+/* markdown */
+function subLabel(code) {
+  const q = document.querySelector(`.q[data-field="${code}"] label.head span[data-en]`);
+  return q ? q.textContent.trim() : code;
+}
+function buildMarkdown() {
+  const sk = lang === "sk";
+  const { per, avg, skips, nas, total } = overall();
+  const flags = redFlags();
+  let md = `# Capacity Assessment (ACM) — ${S.ORG_NAME || "—"}\n\n`;
+  md += `**${sk ? "Dátum" : "Date"}:** ${S.SESSION_DATE || "—"}  \n**${sk ? "Účastníci" : "Participants"}:** ${S.PARTICIPANTS || "—"}  \n`;
+  md += `**AI footprint:** ${S.AI_FOOTPRINT || "—"}  \n**Archetypes:** ${(S.AI_ARCHETYPES || []).join(", ") || "—"}  \n**Regulatory frames:** ${(S.REGULATORY_FRAMES || []).join(", ") || "—"}\n\n`;
+  md += `## Capacity overview\n\n**${sk ? "Celková kapacita" : "Overall capacity"}:** ${avg !== null ? avg.toFixed(2) + " / 3 — " + levelName(avg, sk) : "—"}`;
+  if (skips || nas) md += `  _(annotations: ${skips}× skip, ${nas}× N/A of ${total})_`;
+  md += `\n\n| Domain | Avg | Level | Notes |\n|---|---|---|---|\n`;
+  per.forEach(x => {
+    const meta = [];
+    if (x.l0) meta.push(`${x.l0}× L0`); if (x.na) meta.push(`${x.na}× N/A`); if (x.skip) meta.push(`${x.skip}× skip`);
+    md += `| ${x.id} ${sk ? x.sk : x.en} | ${x.avg !== null ? x.avg.toFixed(2) : "—"} | ${x.avg !== null ? levelName(x.avg, sk) : "—"} | ${meta.join(", ")} |\n`;
+  });
+  md += `\n## Red flags\n\n` + (flags.length ? flags.map(x => `- **${x.id}** — ${x.txt}`).join("\n") : (sk ? "_Žiadne._" : "_None._")) + "\n";
+  md += `\n## ${sk ? "Odpovede per sub-kapacita" : "Per-sub-capacity answers"}\n\n| Sub-capacity | Level |\n|---|---|\n`;
+  ACM.forEach(d => d.subs.forEach(code => {
+    const c = classify(S[code]);
+    let v = c.kind === "level" ? `L${c.n}` : c.kind === "na" ? "N/A" : "—";
+    md += `| ${code} · ${subLabel(code)} | ${v} |\n`;
+  }));
+  const margins = Object.entries(META.margins).filter(([, t]) => t && t.trim());
+  if (margins.length) { md += `\n## Margin notes\n\n`; margins.forEach(([id, t]) => md += `**Section ${id}:** ${t.trim()}\n\n`); }
+  md += `\n---\n*AIROI Framework reference implementation · AIROI Capacity Model (ACM) v0.1 · CC-BY-SA 4.0*\n`;
+  return md;
+}
+function exportMarkdown() { dl(`capacity_${(S.ORG_NAME || "org").replace(/\s+/g, "_")}.md`, buildMarkdown(), "text/markdown"); }
+function copyMarkdown() { navigator.clipboard.writeText(buildMarkdown()).then(() => alert(lang === "sk" ? "Skopírované." : "Copied.")); }
+window.exportMarkdown = exportMarkdown; window.copyMarkdown = copyMarkdown;
+
+document.getElementById("resetBtn").onclick = () => {
+  if (!confirm(lang === "sk" ? "Vymazať všetky odpovede?" : "Delete all answers?")) return;
+  localStorage.removeItem(LS_KEY); location.reload();
+};
+const obs = new IntersectionObserver(es => {
+  es.forEach(e => { if (e.isIntersecting) document.querySelectorAll("nav.rail a").forEach(a => a.classList.toggle("here", a.getAttribute("href") === "#" + e.target.id)); });
+}, { rootMargin: "-40% 0px -55% 0px" });
+document.querySelectorAll("section.block").forEach(s => obs.observe(s));
+
+applyLang();
+renderResults();
+</script>
+</body>
+</html>
