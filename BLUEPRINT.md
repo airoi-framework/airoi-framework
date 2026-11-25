@@ -14,7 +14,7 @@ AI maturity assessmenty sú komodita. Väčšina končí ako skóre v PDF — a 
 1. **Leak #1 — nesúlad potenciálu a fitu.** Odporúčania ignorujú, koľko zmeny organizácia chce a unesie: transformačný program pre organizáciu hľadajúcu stabilitu, produktivity-tipy pre organizáciu potrebujúcu zmenu modelu. Potenciál bez fitu = shelfware.
 2. **Leak #2 — hodnota bez vlastníka.** "Zlepšite data governance" nie je realizovateľná hodnota. Hodnota sa realizuje len v konkrétnom procese s konkrétnym vlastníkom a konkrétnou bolesťou.
 3. **Leak #3 — nadhodnotený fit.** Sebahodnotenie bez verifikácie: respondenti odpovedajú tak, aby dobre vyzerali. Nadhodnotená kapacita = return case postavený na piesku.
-4. **Leak #4 — reťazec končí reportom.** Engagement sa uzavrie odovzdaním dokumentu; realizácia sa nemeria, učenie sa nevracia. Najväčší leak zo všetkých.
+4. **Leak #4 — reťazec končí reportom.** Engagement sa uzavrie odovzdaním dokumentu; realizácia sa nemeria, učenie sa nevracia. Veľkosť leakov nikto neporovnal, ale tento je najčastejšie nemeraný: hodnotu voči nákladom konzistentne meria len menšina firiem (Spec 00 §1.3).
 
 AIROI je systém na utesnenie týchto štyroch únikov: **kalibrácia ambície pred návrhom** (leak #1), **procesné ukotvenie hodnoty** (leak #2), **red-flag verifikácia fitu** (leak #3), **value chain uzavretý až realizovaným returnom** (leak #4). K tomu pridáva delivery ekonomiku: **advisor ∥ AI co-analyst paralelný pattern** — hlbší return case nestojí viac kalendárneho času.
 
@@ -69,7 +69,9 @@ Tri vrstvy, každá s iným režimom. Autoritatívne detaily v [ATTRIBUTIONS.md]
 | Un-bias princíp | čistý formulár pre respondenta, prefill len pre poradcu |
 | Psychological safety | pravidlá formulácie otázok (pozitívny reframe bez straty analytickej hodnoty) |
 | Form data standard | JSON envelope, enum-keyed schéma, rationale kontrakt, margin notes |
-| Advisor ∥ co-analyst pattern | paralelné draftovanie return case, implementačný decision tree |
+| Advisor ∥ co-analyst pattern | paralelné draftovanie return case, operačné pravidlá co-analysta (dôvernosť, overenie zdrojov, provenance, priznanie) |
+| Decision mechaniky | Adaptation Ladder A0–A5, os akcie X0–X3, Stakes × Oversight s pravidlom proporcionality, Acceptance Cards, AI Register |
+| AIROI Capacity Model | 7 domén (vrátane D7 Agency & Control), 22 sub-kapacít |
 | Process deep-dive instrument | maturity dimenzie + technology deep-dive + pain points + motivations |
 | Adoption tiers | odstupňovanie return-confidence engagementu |
 
@@ -81,7 +83,8 @@ Tri vrstvy, každá s iným režimom. Autoritatívne detaily v [ATTRIBUTIONS.md]
 
 - **APQC PCF** — procesná taxonómia. Framework odkazuje na PCF ID-čka, nikdy neredistribuuje obsah PCF. Practitioner si PCF obstará priamo od APQC.
 - **Run/Grow/Transform klasifikácia investičného zámeru** — všeobecne rozšírený koncept IT portfólio managementu; Ambition Vector je ním konceptuálne inšpirovaný, osi a kalibračná metóda sú vlastné IP.
-- **NIST AI RMF, ISO/IEC 42001, EU AI Act** — referenčné compliance / target-state rámce, budúce mapping targets.
+- **NIST AI RMF + AI 600-1, ISO/IEC 42001/42005/42006, EN 18286, EU AI Act** — referenčné compliance / target-state rámce. AI Act trieda a rola sa evidujú per príležitosť (D4 §3); detailný crosswalk po v1.0.
+- **OWASP Top 10 for LLM / Agentic Applications (2026), MITRE ATLAS** — referencované bezpečnostné katalógy pre AI, ktorá koná (ACM D7, RF-45/46).
 
 ### Červené čiary
 
@@ -121,13 +124,15 @@ Signály & Dopyt  →  ┌─────────────── AI VALUE
 | **Realize** | realizácia — **na strane klienta** | post-engagement (roadmapa) |
 | **Recalibrate** | meranie realizovaného returnu, spätná väzba do systému | Retrospective + follow-up |
 
-Kľúčový ťah mytológie: **reťazec nie je uzavretý decision reportom, ale realizovaným returnom.** Realize je aktivita Sponzora; framework ju nedoručuje, ale pripravuje (roadmapa s ownermi, decision tree, quick wins) a meria (Recalibrate). Tým sa AIROI štrukturálne odlišuje od assessmentov, ktoré končia skóre — a tesní value leak #4.
+Kľúčový ťah metodiky: **reťazec nie je uzavretý decision reportom, ale realizovaným returnom.** Realize je aktivita Sponzora; framework ju nedoručuje, ale pripravuje (rozhodnutia s ownermi, Acceptance Cards, AI Register, quick wins) a meria (Recalibrate). Tým sa AIROI štrukturálne odlišuje od assessmentov, ktoré končia skóre — a tesní value leak #4.
 
 **Return Equation:**
 
 ```
-Return = Potential × Fit          kde Fit = Ambícia × Kapacita
+Return(o) = Potential(o) × Fit(o)      kde Fit(o) = Match(o, Ambícia) × Kapacita(o)
 ```
+
+Return sa posudzuje **per príležitosť**. Ambition Vector je rozdelenie (kam chce organizácia zmenu), nie veľkosť — nenásobí sa; vstupuje cez zhodu triedy príležitosti s vektorom (strong / partial / none) a ako tvar portfólia. Kapacita sa posudzuje pre to, čo konkrétna príležitosť potrebuje (ACM predpoklady pre rung a úroveň akcie, dáta, flow vlastníka, change leadership), nie z priemeru organizácie.
 
 Príležitosť s vysokým potenciálom bez fitu = shelfware (leak #1). Fit bez potenciálu = busywork. Preto D2 (Ambition Calibration) vždy predchádza D4 (Opportunity Discovery) — a preto Realism Rules škrtajú odporúčania, ktoré organizácia neunesie.
 
@@ -182,9 +187,9 @@ Po každej session: anonymný feedback formulár (engagement steering + signál 
 |---|---|---|---|---|
 | D1 | **Evidence & Hypotheses** | pre-engagement research z verejných zdrojov | paralelné research streams (finančný / strategický / technologicko-bolestný / stakeholder), evidence grades, time-boxovaná syntéza, falzifikovateľné hypotézy | presnosť vstupov — kvalitná evidencia znižuje neistotu P aj F odhadov |
 | D2 | **Ambition Calibration** | Ambition Vector: koľko zmeny organizácia chce a unesie | osi **Sustain / Scale / Shift** (100 bodov), sektorové baselines, evidence tiers, prepojené slidery vo workshop instrumente, defense rules podľa grade, Realism Rules | kalibruje **Fit** (zložku Ambícia) |
-| D3 | **Capability Assessment** | zrelosť organizácie (AI praktiky) aj konkrétnych procesov | organizačný AI maturity assessment (8 domén, L0–L3 + N/A) + process deep-dive (maturity dimenzie, technology, pain points, motivations) na PCF-ukotvených procesoch | meria **Fit** (zložku Kapacita) a lokalizuje, kde sa skrýva P |
+| D3 | **Capability Assessment** | zrelosť organizácie (AI praktiky) aj konkrétnych procesov | AIROI Capacity Model (7 domén, 22 sub-kapacít, L0–L3 + N/A; D7 len pre AI, ktorá koná) + process deep-dive (maturity dimenzie, technology, pain points, motivations) na PCF-ukotvených procesoch | meria **Fit** (zložku Kapacita) a lokalizuje, kde sa skrýva P |
 | D4 | **Opportunity Discovery** | AI príležitosti naviazané na procesnú bolesť | matching proti opportunity poolu; každá príležitosť → konkrétna bolesť → konkrétny krok procesu → konkrétny vlastník | tvaruje **Potential** — hodnotu s vlastníkom a adresou |
-| D5 | **Decision Enablement** | konzistencia, syntéza a rozhodnutie | Red-Flag Catalog (cross-checks), advisor ∥ co-analyst paralelné draftovanie, gradient štruktúra reportu (pre-read → findings → support → appendix), implementačný decision tree (provider app / custom SW / own model / no AI) | chráni R pred nekonzistenciou (leak #3) a pripravuje Realize (leak #4) |
+| D5 | **Decision Enablement** | konzistencia, syntéza a rozhodnutie | Red-Flag Catalog (cross-checks), advisor ∥ co-analyst paralelné draftovanie, gradient štruktúra reportu (pre-read → findings → support → appendix), Adaptation Ladder A0–A5 + os akcie X0–X3, decide gates (proporcionalita, Acceptance Card, absorpcia, AI Act) | chráni R pred nekonzistenciou (leak #3) a pripravuje Realize (leak #4) |
 
 ### 4.4 Roles (4)
 
@@ -224,8 +229,8 @@ Merania nie sú deliverables — sú to vstupy Return Equation. Každý systém 
 
 | Systém | Meria | Škála | Pravidlá |
 |---|---|---|---|
-| **Ambition Vector** | Fit — zložka Ambícia | 3 zložky, súčet 100 | sektorové baselines ako prior; evidence tiers; Realism Rules (napr. Shift > 30 pri nízkej tolerancii neistoty → presun do Scale); zákaz 0 % a 33/33/33 |
-| **Organizačná AI maturity** | Fit — zložka Kapacita (organizácia) | L0–L3 + N/A per sub-praktika | L0 = 0 vstupuje do priemeru (reálna medzera), N/A vyňaté, skip → incomplete signál; per-doména priemer + celkové skóre |
+| **Ambition Vector** | Fit — referencia pre ambition match a tvar portfólia (nenásobí sa) | 3 zložky, súčet 100 | sektorové baselines ako prior; evidence tiers; Realism Rules (napr. Shift > 30 pri nízkej tolerancii neistoty → presun do Scale); zákaz 0 % a 33/33/33 |
+| **AIROI Capacity Model** | Fit — vstup do Kapacity (organizácia; posudzuje sa per príležitosť) | L0–L3 + N/A per sub-praktika | L0 = 0 vstupuje do priemeru (reálna medzera), N/A vyňaté, skip → incomplete signál; per-doména priemer + celkové skóre |
 | **Process maturity** | Fit — zložka Kapacita (proces) + lokalizácia P | úrovne per dimenzia + composite tech skóre | maturity dimenzie + technology composite; kritickosť a frekvencia ako kontext |
 | **Red flags** | konzistencia meraní (ochrana R) | katalóg pravidiel | deklaratívne cross-check pravidlá; každé pravidlo má trigger, závažnosť a odporúčanú validáciu v session |
 
@@ -297,11 +302,11 @@ Odhad: kroky 1–4 = jeden sústredený blok; krok 5 je gro práce.
 1. ~~**Definitívne meno**~~ — **vyriešené (v0.10)**: AIROI je definitívne meno frameworku.
 2. ~~**Pomenovanie tiers**~~ — **vyriešené (v0.11)**: Pulse / Case / Launch — mená hovoria, čo si klient kupuje (pulz → return case → štart realizácie).
 3. ~~**Náhrada maturity modelu**~~ — **vyriešené (v0.8)**: AIROI Capacity Model (ACM) — originálny 6-doménový model ukotvený v NIST AI RMF — nahradil adaptovaný assessment. Spec: `spec/03-disciplines/ACM-capacity-model.md`.
-4. **Threat/security modul** — či a ako zaradiť AI security assessment vrstvu (kandidáti: OWASP LLM Top 10, MITRE ATLAS ako referencované rámce); rozhodnúť pri písaní D3/D5.
+4. ~~**Threat/security modul**~~ — **vyriešené (v0.11)**: bezpečnosť AI, ktorá koná, nesie ACM D7 (identita, ohraničenie akcií, sledovateľnosť) a RF-43…RF-47; OWASP Top 10 for LLM / Agentic Applications (2026) a MITRE ATLAS sú referencované externé katalógy, AIROI ich nešpecifikuje znova.
 5. **Opportunity pool štruktúra** — formát definovať v D4; seed data ostávajú mimo frameworku.
 6. ~~**Return measurement v Recalibrate**~~ — **vyriešené (v0.9, EP-01/E2)**: Acceptance Cards definujú metriku, zmeranú baseline, kill criteria a review interval per opportunity už pri Decide; Recalibrate číta karty a audituje AI Register.
-7. **Cost estimation model** — high-level DEV/OPS odhady v D5: definovať štruktúru modelu (ranges, nie point estimates).
-8. **AI co-analyst live asistencia** — živý asistent počas Alignment Session (follow-up hinty, live heat mapa): koncept, zatiaľ mimo spec.
+7. **Cost estimation model** — čiastočne vyriešené (v0.11): ranges, cost per outcome, náklad zmeny (RF-55), re-estimate pri každom review. Zostáva: štruktúra DEV/OPS modelu per rung.
+8. **AI co-analyst live asistencia** — pravidlá použitia sú v Spec 02 §1 (súhlas, P5, dôvernosť prepisov); konkrétne funkcie (follow-up hinty, live heat mapa) zatiaľ mimo spec.
 9. **Interviewee-mapping** — PCF oblasť × sektor → typické roly na interview; formalizovať v D3.
 10. **Mapping na NIST AI RMF / ISO 42001 / EU AI Act** — crosswalk tabuľky ako appendix po v1.0.
 11. **Publikačná identita** — pred prepnutím na public zvážiť, pod akou identitou (osobný vs. organizačný účet) framework publikovať.

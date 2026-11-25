@@ -2,7 +2,68 @@
 
 All notable changes to the AIROI Framework blueprint and specification.
 
-## v0.11 — Tiers renamed: Pulse / Case / Launch
+## v0.11 — Tiers renamed: Pulse / Case / Launch; research-based revision
+
+### Research-based revision (2026-11)
+
+Corrections from four external reviews (ROI evidence, capacity & change,
+delivery & technology, regulation & standards). Version number unchanged.
+
+- **Return Equation corrected** — Fit is judged per opportunity:
+  `Fit(o) = Match(o, Ambition) × Capacity(o)`. The Ambition Vector is a
+  100-point distribution, not a magnitude, and is never multiplied; it
+  enters Fit through the ambition match (strong / partial / none) and
+  shapes the portfolio (RF-48). Capacity is checked against what the
+  opportunity needs, not the organization-wide average. (Spec 00 §4,
+  D2, D4 §4, Spec 08)
+- **Action axis for AI that acts** — new mandatory attribute
+  `action_level` X0 Inform · X1 Draft · X2 Act with approval · X3 Act
+  within bounds, orthogonal to the Adaptation Ladder; stakes for X2+
+  classified on the worst plausible action; action–oversight coherence;
+  climb on evidence for autonomy; archetype `agent`. (D4 §3, D5 Part 2)
+- **ACM v0.2** — new domain **D7 Agency & Control** (AGENT_IDENTITY,
+  ACTION_BOUNDS, ACTION_TRACEABILITY; N/A only when nothing in scope
+  acts) and new sub-capacity **CHANGE_LEADERSHIP** in D1 (now 7 domains,
+  22 sub-capacities). Level statements revised: AI literacy (EU AI Act
+  Art. 4), shadow AI and value-not-usage in ADOPTION_INCENTIVES,
+  output-quality norms in SAFE_USE_CULTURE, end-to-end redesign in
+  PROCESS_INTEGRATION L3, system learning in CONTINUOUS_LEARNING L3.
+  NIST crosswalk corrected (decommissioning GOVERN 1.7, human oversight
+  GOVERN 3.2 / MAP 3.5, third parties GOVERN 6 / MANAGE 3) and extended
+  to NIST AI 600-1.
+- **Evidence base** — new Spec 00 §1.3 citing public evidence for the
+  framework's empirical claims; leak #4 no longer called "the largest";
+  untested assumptions (sector baselines, ambition-before-potential cost
+  asymmetry, co-analyst time saving, tier confidence, heuristic
+  thresholds) marked as Grade C hypotheses to test before v1.0.
+- **Sizing** — productivity evidence rule (self-reported savings ≤ Grade
+  C, ranges incl. negative outcomes), cost of change in estimates and
+  Acceptance Cards, cost per outcome re-estimated at each review.
+- **Regulation** — per-opportunity `ai_act_class` and `ai_act_role`,
+  separate from stakes; Decide gates for prohibited and high-risk use;
+  dated EU AI Act obligations (as amended by Reg. (EU) 2026/1744) as
+  roadmap constraints; `REGULATORY_FRAMES` key `ai_regulation` split
+  into `eu_ai_act_high_risk` / `eu_ai_act_general` / `ai_regulation_other`;
+  ATTRIBUTIONS extended (AI 600-1, ISO/IEC 42005/42006, EN 18286, OWASP,
+  MITRE ATLAS, agentic references).
+- **AI Register & Acceptance Card** — model, vendor, version, vendor
+  retirement date, agent identity; re-eval on every model change;
+  `reeval_trigger` and `cost_of_change` card fields.
+- **Co-analyst operating rules** — confidentiality, human source
+  verification before Grade A/B, provenance, disclosure, live-use
+  consent. (Spec 02 §1, P7)
+- **Red-Flag Catalog v3** — 15 new rules RF-43…RF-57 (agents,
+  portfolio shape, productivity evidence, AI Act, model lifecycle, cost
+  of change, AI-sourced evidence); RF-13 narrowed to high-risk
+  obligations; RF-17 reworded for shadow AI. Catalog now 57 rules.
+- **Reference implementations** — capacity instrument updated to ACM
+  v0.2 (D7, CHANGE_LEADERSHIP, revised statements, RF-43, RF-53, new
+  regulatory keys); ambition instrument regulatory keys updated.
+- **Blueprint/README** — fixed "mythology" typo, removed the obsolete
+  implementation decision tree, corrected domain and rule counts;
+  open item 4 (security) resolved, items 7 and 8 narrowed.
+
+### Tiers renamed
 
 - Adoption tiers renamed to speak the value language — each tier is
   named for what the client buys: **Pulse** (a directional pulse check

@@ -7,7 +7,7 @@
 
 ## 0. About this document
 
-How engagements are sized and what each side commits to. Tiers are **return-confidence levels**: how much certainty about Potential × Fit the client is buying — not feature lists.
+How engagements are sized and what each side commits to. Tiers are **return-confidence levels**: how much certainty about Potential × Fit the client is buying — not feature lists. That the tiers deliver distinct, increasing confidence is a framework hypothesis (Spec 00 §1.3), tested at Recalibrate by comparing realized against predicted return per tier.
 
 ---
 
@@ -58,7 +58,7 @@ The full gate list lives in Spec 02 §5. Tier deltas:
 | Evidence Dossier before Stage 1 | reduced OK | mandatory full | mandatory full |
 | Ambition Vector leadership sign-off | mandatory | mandatory | mandatory |
 | Per-opportunity owner + pain anchor | shortlist only | mandatory all | mandatory all |
-| Stakes + oversight per shortlisted opportunity | mandatory | mandatory | mandatory |
+| Stakes + action level + oversight per shortlisted opportunity | mandatory | mandatory | mandatory |
 | Acceptance Card per approved opportunity | short form | mandatory full | mandatory full |
 | Roadmap validated against Absorption Rules | mandatory | mandatory | mandatory |
 | AI Register handover | merged into report | mandatory | mandatory |

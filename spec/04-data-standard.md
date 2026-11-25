@@ -179,14 +179,23 @@ Shared enum sets used across instruments and artifacts. Semantics are defined in
 |---|---|---|
 | **Stakes Ladder** | `S0` negligible · `S1` recoverable · `S2` serious · `S3` critical | D4/D5 (EP-01/E1) |
 | **Oversight Modes** | `O1` human decides · `O2` human approves · `O3` human monitors · `O4` autonomous with tripwires | D4/D5 (EP-01/E1) |
+| **Action Levels** | `X0` inform · `X1` draft · `X2` act with approval · `X3` act within bounds | D4 §3, D5 Part 2 |
+| **Action reversibility** | `reversible` · `compensable` · `irreversible` | D4 §3 |
+| **Opportunity archetype** | `automation` · `augmentation` · `analytics` · `generation` · `agent` | D4 pool |
+| **Ambition match** | `strong` · `partial` · `none` | D4 §4 |
+| **Capacity grade** | `sufficient` · `gap_closable` · `insufficient` | D4 §4 |
+| **AI Act class** | `prohibited` · `high_risk_annex_iii` · `high_risk_annex_i` · `transparency_art50` · `minimal` · `not_applicable` | D4 §3 |
+| **AI Act role** | `provider` · `deployer` · `both` · `not_applicable` | D4 §3 |
+| **Regulatory frames** (`REGULATORY_FRAMES`, multi) | `privacy` · `eu_ai_act_high_risk` · `eu_ai_act_general` · `ai_regulation_other` · `cyber` · `sectoral` · `esg` · `contractual` · `none` | instruments; RF-12, RF-13, RF-53 |
 | **Adaptation Ladder** | `A0` no AI · `A1` use · `A2` instruct · `A3` ground · `A4` specialize · `A5` own | D5 (EP-01/E3) |
 | **Value class** | `efficiency` · `revenue` · `risk` | D4 (EP-01/E3) |
 | **Flow States** | `F1` underwater · `F2` steady · `F3` investing · `F4` compounding | D3 (EP-01/E4) |
 
 Validation additions:
 
-9. `stakes`, `oversight_mode`, `adaptation_rung`, `value_class`, and `flow_state` values must come from the enum sets above.
-10. Every shortlisted opportunity in an envelope must carry `stakes` and `oversight_mode`; instruments must refuse a Decide-stage export where either is missing (RF-32 fires otherwise).
+9. `stakes`, `action_level`, `oversight_mode`, `adaptation_rung`, `value_class`, `flow_state`, `ambition_match`, `capacity_grade`, `ai_act_class`, and `ai_act_role` values must come from the enum sets above.
+10. Every shortlisted opportunity in an envelope must carry `stakes`, `action_level`, and `oversight_mode`; instruments must refuse a Decide-stage export where any is missing (RF-32 fires otherwise). X2+ opportunities must also carry `action_reversibility` and `tool_reach`.
+11. Where `REGULATORY_FRAMES` includes an EU AI Act key (`eu_ai_act_high_risk` / `eu_ai_act_general`), every shortlisted opportunity must carry `ai_act_class` and `ai_act_role` (RF-52 fires otherwise).
 
 ---
 
