@@ -70,7 +70,7 @@ The return case. **Gradient structure** (each layer complete at its own depth):
 
 1. **Executive summary** — the decision picture: ambition, top opportunities, recommended path, first steps
 2. **Findings** — as-is, validated Ambition Vector with rationale, capability picture (honest scores), gap analysis
-3. **Opportunity portfolio** — shortlist with owners, stakes, oversight modes, value-class mix, sizing ranges (unit economics), Adaptation Ladder rungs; parked list with reasons
+3. **Opportunity portfolio** — shortlist with owners, stakes, action levels, oversight modes, ambition match and portfolio shape, value-class mix, sizing ranges (unit economics), Adaptation Ladder rungs; parked list with reasons
 4. **Roadmap** — 0–3 / 3–6 / 6–12 month horizons; quick wins first; every item has an owner with a known flow state; validated against the Absorption Rules
 5. **Risks and dependencies** — carried red flags (by ID), regulatory exposure, delivery risks, culture-texture notes
 6. **Next actions** — what happens in the first weeks, by whom
@@ -103,6 +103,8 @@ One card per approved opportunity, written at Synthesis and agreed at Decide. **
 | `quality_bar` | minimum output quality for the opportunity's stakes level |
 | `kill_criteria` | the condition under which the opportunity is stopped or rolled back |
 | `review_interval` | when Recalibrate measures |
+| `reeval_trigger` | events that force a re-run of the eval before they reach production — at minimum any change of model, model version, or (X2+) `tool_reach` |
+| `cost_of_change` | ranged estimate of redesign, enablement, owner time, and transition cost (RF-55); re-estimated with cost per outcome at each review |
 
 Rules: the baseline is measured before deployment; kill criteria are agreed at Decide while heads are cool — not after a year of sunk cost. For S1+ stakes, the preferred `eval_method` is a **reference case set** (real cases with expected outputs), built cheaply during the Field Sessions from the Process Experts' own examples. Cards appear in the Decision Report appendix and travel into the AI Register.
 
@@ -113,13 +115,17 @@ The handover inventory of approved AI, delivered to the Sponsor at Decide and **
 | Field | Content |
 |---|---|
 | `opportunity` | reference to the shortlist entry and its Acceptance Card |
-| `stakes` / `oversight_mode` | S0–S3 / O1–O4 as approved (with any recorded Sponsor exceptions) |
+| `stakes` / `action_level` / `oversight_mode` | S0–S3 / X0–X3 / O1–O4 as approved (with any recorded Sponsor exceptions) |
+| `ai_act_class` / `ai_act_role` | where the EU AI Act applies (D4 §3) |
 | `owner` | the named realization owner |
 | `adaptation_rung` | A0–A5 as approved |
-| `review_date` | when the entry is next reviewed |
+| `model` | model, vendor, and version in production |
+| `vendor_retirement_date` | the vendor's announced deprecation or retirement date for that version ("none announced" is a valid, dated entry) |
+| `agent_identity` | X2+ only: the agent's own identity, `tool_reach` with permissions, log owner, and stop mechanism |
+| `review_date` | when the entry is next reviewed — never later than `vendor_retirement_date` |
 | `retirement_criterion` | the condition under which the system is retired |
 
-The register carries the **sunset discipline**: no entry without a review date and a retirement condition. Realize stops being a black box — the register is the object Recalibrate audits, and the client's living record of what AI runs where, under whose oversight, at what stakes.
+The register carries the **sunset discipline**: no entry without a review date and a retirement condition. It also carries the **model lifecycle**: vendor retirement windows can be a few months — shorter than a typical Recalibrate interval — so the register, not the next engagement, is where a forced model change is caught and the eval re-run (RF-54, RF-56). The AI Register is the client's internal inventory; it is distinct from, and does not replace, registration in the EU database for high-risk systems (EU AI Act Art. 49/71) where that applies. Realize stops being a black box — the register is the object Recalibrate audits, and the client's living record of what AI runs where, under whose oversight, at what stakes.
 
 ---
 

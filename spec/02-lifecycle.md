@@ -24,6 +24,14 @@ Four roles, three lanes. The engagement process runs across a Client lane, an Ad
 
 The Co-analyst lane is formal: its work is visible, auditable, and reviewed by the Lead Advisor before anything reaches the client (P7).
 
+**Co-analyst operating rules.** The co-analyst is itself AI that handles client data, so the framework applies its own discipline to it:
+
+1. **Confidentiality** — before Groundwork, the engagement records where the co-analyst runs, which client data it may see, whether that data can be retained or used for training by the tool provider, and what the client has agreed to. Client data never enters a tool the client has not cleared.
+2. **Source verification** — a source found or summarized by the co-analyst is opened and checked by a human before any claim built on it receives Grade A or B (RF-57). Fabricated or misattributed citations are a known failure mode, not an edge case.
+3. **Provenance** — the Analysis Artifacts record which parts were drafted by the co-analyst and which were reviewed or rewritten by the advisor.
+4. **Disclosure** — the client is told, at intake, that a co-analyst is used and for what (P7: no hidden machine).
+5. **Live use** — AI assistance during sessions (transcription, live hints) requires the participants' consent, never shows hypotheses or prefills to respondents (P5), and its transcripts are handled under rule 1 (P6).
+
 ---
 
 ## 2. Stage map
@@ -91,11 +99,11 @@ Candidate opportunities are matched against the opportunity pool (Spec 03/D4) �
 The parallel pattern — the engagement's quiet engine:
 
 - **Advisor stream (judgment):** executive narrative, as-is/to-be reasoning, ambition rationale, opportunity prioritization logic, roadmap sequencing, risks and change-readiness commentary, next actions with owners.
-- **Co-analyst stream (mechanics):** maturity scoring aggregation, opportunity sizing tables, architecture impact estimation, cost ranges (build/operate), implementation option per opportunity (provider app / custom software / own model / no AI), consistency checks.
+- **Co-analyst stream (mechanics):** maturity scoring aggregation, opportunity sizing tables, architecture impact estimation, cost ranges (build/operate and cost of change), draft Adaptation Ladder rung and action level per opportunity (D5 Part 2), draft Acceptance Cards and AI Register entries, consistency checks.
 
 Both streams converge before Stage 3; the Lead Advisor reviews, integrates, and owns the result. Without the parallel pattern, the advisor either skips consistency work or spends an extra unpaid week on it.
 
-**Exit criteria:** Decision Report draft in gradient structure; every opportunity carries owner, sizing, implementation option; red flags resolved or explicitly carried as open questions.
+**Exit criteria:** Decision Report draft in gradient structure; every opportunity carries owner, sizing, rung, action level; red flags resolved or explicitly carried as open questions.
 
 ### Stage 3 — Decision Session
 
@@ -105,7 +113,7 @@ In session: findings (maturity, ambition, gaps) → opportunity portfolio → ro
 
 **Sign-off** by the Sponsor closes the engagement's controllable phase. A decision to wait is valid; an undecided report is not (Spec 00 §3.2 — Decide).
 
-**Exit criteria:** signed-off report; every approved opportunity has a named owner, a horizon, classified stakes with a proportionate oversight mode, and an Acceptance Card with a measured baseline; the AI Register is handed to the Sponsor; the Recalibrate schedule reads from the cards.
+**Exit criteria:** signed-off report; every approved opportunity has a named owner, a horizon, classified stakes, action level, and a proportionate oversight mode (plus `ai_act_class` / `ai_act_role` where the EU AI Act applies), and an Acceptance Card with a measured baseline; the AI Register is handed to the Sponsor; the Recalibrate schedule reads from the cards.
 
 ### Retrospective
 
@@ -131,7 +139,7 @@ Before an engagement is declared complete:
 - [ ] Ambition Vector validated and signed off by leadership at Stage 1
 - [ ] Process heat map produced at Stage 1, refined at Stage 2
 - [ ] Every priority opportunity traces to a specific pain named by a specific expert
-- [ ] Every shortlisted opportunity carries stakes and a proportionate oversight mode (RF-31/32)
+- [ ] Every shortlisted opportunity carries stakes, action level, and a proportionate oversight mode (RF-31/32); X2+ opportunities meet their ACM prerequisites (RF-43/44)
 - [ ] Every approved opportunity has an Acceptance Card with a measured baseline (RF-34/35)
 - [ ] Roadmap validated against the Absorption Rules (RF-40/41/42)
 - [ ] Executive Pre-Read distributed before Stage 3

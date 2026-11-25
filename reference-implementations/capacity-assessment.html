@@ -122,7 +122,8 @@
   <a href="#s-d4" data-en="5 · Delivery &amp; Integration" data-sk="5 · Doručovanie a integrácia">…</a>
   <a href="#s-d5" data-en="6 · Trust &amp; Control" data-sk="6 · Dôvera a kontrola">…</a>
   <a href="#s-d6" data-en="7 · Operations &amp; Learning" data-sk="7 · Prevádzka a učenie">…</a>
-  <a href="#s-results" data-en="8 · Results" data-sk="8 · Výsledky">…</a>
+  <a href="#s-d7" data-en="8 · Agency &amp; Control" data-sk="8 · Agentnosť a kontrola">…</a>
+  <a href="#s-results" data-en="9 · Results" data-sk="9 · Výsledky">…</a>
 </nav>
 
 <main>
@@ -161,6 +162,7 @@
       <div class="opt multi" data-v="augmentation"><b data-en="Augmentation (human-assist)" data-sk="Augmentácia (asistencia človeku)">…</b></div>
       <div class="opt multi" data-v="analytics"><b data-en="Analytics (prediction, scoring)" data-sk="Analytika (predikcia, skóring)">…</b></div>
       <div class="opt multi" data-v="generation"><b data-en="Generation (content, code)" data-sk="Generovanie (obsah, kód)">…</b></div>
+      <div class="opt multi" data-v="agent"><b data-en="Agents (multi-step actions in systems via tools)" data-sk="Agenti (viackrokové akcie v systémoch cez nástroje)">…</b></div>
       <div class="opt multi" data-v="none"><b data-en="None" data-sk="Žiadne">…</b></div>
     </div>
     <div class="prefill-note" contenteditable="true"></div>
@@ -169,7 +171,9 @@
     <label class="head"><span class="code-chip">REGULATORY_FRAMES</span><span data-en="Applicable regulatory frames" data-sk="Aplikovateľné regulačné rámce">…</span><span class="grade-chip"></span></label>
     <div class="opts">
       <div class="opt multi" data-v="privacy"><b data-en="Privacy regulation" data-sk="Regulácia súkromia">…</b></div>
-      <div class="opt multi" data-v="ai_regulation"><b data-en="AI regulation" data-sk="AI regulácia">…</b></div>
+      <div class="opt multi" data-v="eu_ai_act_high_risk"><b data-en="EU AI Act — high-risk systems (Annex I/III) provided or deployed" data-sk="EU AI Act — vysoko rizikové systémy (príloha I/III) ako poskytovateľ alebo nasadzovateľ">…</b></div>
+      <div class="opt multi" data-v="eu_ai_act_general"><b data-en="EU AI Act — general obligations only (Art. 4 literacy, Art. 50 transparency)" data-sk="EU AI Act — len všeobecné povinnosti (čl. 4 gramotnosť, čl. 50 transparentnosť)">…</b></div>
+      <div class="opt multi" data-v="ai_regulation_other"><b data-en="Other AI-specific regulation" data-sk="Iná AI-špecifická regulácia">…</b></div>
       <div class="opt multi" data-v="cyber"><b data-en="Cybersecurity / resilience" data-sk="Kyberbezpečnosť / odolnosť">…</b></div>
       <div class="opt multi" data-v="sectoral"><b data-en="Sectoral regimes" data-sk="Sektorové režimy">…</b></div>
       <div class="opt multi" data-v="none"><b data-en="None significant" data-sk="Žiadne významné">…</b></div>
@@ -181,7 +185,7 @@
 
 <section class="block" id="s-d1">
   <h2><span class="dom-tag">D1</span> <span data-en="Direction &amp; Accountability" data-sk="Smerovanie a zodpovednosť">…</span></h2>
-  <p class="lead" data-en="NIST grounding: GOVERN (policies, accountability, oversight)" data-sk="NIST ukotvenie: GOVERN (policies, accountability, oversight)">…</p>
+  <p class="lead" data-en="NIST grounding: GOVERN 1–2 (policies, accountability) + GOVERN 4 (culture of risk communication)" data-sk="NIST ukotvenie: GOVERN 1–2 (policies, accountability) + GOVERN 4 (kultúra komunikácie rizík)">…</p>
   <div class="q" data-field="VALUE_OWNERSHIP" data-type="capacity" data-domain="D1">
     <label class="head"><span class="code-chip">VALUE_OWNERSHIP</span><span data-en="Value ownership" data-sk="Vlastníctvo hodnoty">…</span><span class="grade-chip"></span></label>
     <div class="cap-grid">
@@ -215,18 +219,29 @@
     </div>
     <div class="prefill-note" contenteditable="true"></div>
   </div>
+  <div class="q" data-field="CHANGE_LEADERSHIP" data-type="capacity" data-domain="D1">
+    <label class="head"><span class="code-chip">CHANGE_LEADERSHIP</span><span data-en="Change leadership &amp; track record" data-sk="Vedenie zmeny a história zmien">…</span><span class="grade-chip"></span></label>
+    <div class="cap-grid">
+      <div class="cap-card" data-v="0"><span class="cap-badge b0">L0</span><span class="cap-text" data-en="Not in place — no practice or awareness in this area." data-sk="Nie je zavedené — žiadna prax ani povedomie v tejto oblasti.">…</span></div>
+      <div class="cap-card" data-v="1"><span class="cap-badge b1">L1</span><span class="cap-text" data-en="Change rests on individual sponsors; results of past change initiatives are not reviewed; managers are left to explain AI-driven change to their teams on their own." data-sk="Zmena stojí na jednotlivých sponzoroch; výsledky minulých zmenových iniciatív sa nevyhodnocujú; manažéri vysvetľujú AI zmeny tímom sami.">…</span></div>
+      <div class="cap-card" data-v="2"><span class="cap-badge b2">L2</span><span class="cap-text" data-en="A coalition of aligned leaders — not a single sponsor — backs AI change; past change initiatives are reviewed honestly; managers are equipped to lead AI-changed work with their teams." data-sk="AI zmenu podporuje koalícia zladených lídrov, nie jeden sponzor; minulé zmenové iniciatívy sa úprimne vyhodnocujú; manažéri sú pripravení viesť s tímami prácu zmenenú AI.">…</span></div>
+      <div class="cap-card" data-v="3"><span class="cap-badge b3">L3</span><span class="cap-text" data-en="The organization has a measured record of landing change; teams, not only managers, rate manager-led AI conversations as useful, and the trust gap between leadership and frontline is tracked and closing." data-sk="Organizácia má zmeranú históriu úspešných zmien; rozhovory o AI vedené manažérmi hodnotia ako užitočné tímy, nielen manažéri, a rozdiel v dôvere medzi vedením a frontline sa sleduje a zmenšuje.">…</span></div>
+      <div class="cap-card na" data-v="na"><span class="cap-badge bna">N/A</span><span class="cap-text" data-en="Not applicable to the assessed scope." data-sk="Netýka sa hodnoteného rozsahu.">…</span></div>
+    </div>
+    <div class="prefill-note" contenteditable="true"></div>
+  </div>
   <div class="margin-note" data-note="2"><label data-en="Margin note — D1" data-sk="Margin note — D1">…</label><textarea></textarea></div>
 </section>
 
 <section class="block" id="s-d2">
   <h2><span class="dom-tag">D2</span> <span data-en="People &amp; Adoption" data-sk="Ľudia a adopcia">…</span></h2>
-  <p class="lead" data-en="NIST grounding: GOVERN (culture, workforce) + MANAGE (human oversight)" data-sk="NIST ukotvenie: GOVERN (culture, workforce) + MANAGE (human oversight)">…</p>
+  <p class="lead" data-en="NIST grounding: GOVERN 2–3 (workforce, human–AI roles, GOVERN 3.2) + MAP 3.5 (human oversight)" data-sk="NIST ukotvenie: GOVERN 2–3 (workforce, roly človek–AI, GOVERN 3.2) + MAP 3.5 (ľudský dohľad)">…</p>
   <div class="q" data-field="LITERACY_SKILLS" data-type="capacity" data-domain="D2">
     <label class="head"><span class="code-chip">LITERACY_SKILLS</span><span data-en="Literacy &amp; skills" data-sk="Gramotnosť a zručnosti">…</span><span class="grade-chip"></span></label>
     <div class="cap-grid">
       <div class="cap-card" data-v="0"><span class="cap-badge b0">L0</span><span class="cap-text" data-en="Not in place — no practice or awareness in this area." data-sk="Nie je zavedené — žiadna prax ani povedomie v tejto oblasti.">…</span></div>
-      <div class="cap-card" data-v="1"><span class="cap-badge b1">L1</span><span class="cap-text" data-en="AI competence is concentrated in a few self-taught individuals." data-sk="AI kompetencia je sústredená v niekoľkých samoukoch.">…</span></div>
-      <div class="cap-card" data-v="2"><span class="cap-badge b2">L2</span><span class="cap-text" data-en="Role-appropriate AI training exists, and required skill profiles are defined for affected roles." data-sk="Existuje AI tréning primeraný rolám a pre dotknuté roly sú definované požadované profily zručností.">…</span></div>
+      <div class="cap-card" data-v="1"><span class="cap-badge b1">L1</span><span class="cap-text" data-en="AI competence is concentrated in a few self-taught individuals; no one is accountable for AI literacy." data-sk="AI kompetencia je sústredená u niekoľkých samoukov; za AI gramotnosť nikto nezodpovedá.">…</span></div>
+      <div class="cap-card" data-v="2"><span class="cap-badge b2">L2</span><span class="cap-text" data-en="Role-appropriate AI literacy measures cover staff and others operating AI on the organization&#x27;s behalf (cf. EU AI Act Art. 4); skill profiles for affected roles include supervising and checking AI work, and managers are trained to lead it." data-sk="Opatrenia AI gramotnosti primerané roliam pokrývajú zamestnancov aj ďalších, ktorí v mene organizácie prevádzkujú AI (porov. čl. 4 AI Act); profily zručností dotknutých rolí zahŕňajú dohľad nad prácou AI a jej kontrolu a manažéri sú vyškolení ju viesť.">…</span></div>
       <div class="cap-card" data-v="3"><span class="cap-badge b3">L3</span><span class="cap-text" data-en="Skills are measured and renewed continuously; competence development anticipates upcoming AI use rather than trailing it." data-sk="Zručnosti sa merajú a kontinuálne obnovujú; rozvoj kompetencií predbieha budúce použitie AI, nezaostáva za ním.">…</span></div>
       <div class="cap-card na" data-v="na"><span class="cap-badge bna">N/A</span><span class="cap-text" data-en="Not applicable to the assessed scope." data-sk="Netýka sa hodnoteného rozsahu.">…</span></div>
     </div>
@@ -236,9 +251,9 @@
     <label class="head"><span class="code-chip">ADOPTION_INCENTIVES</span><span data-en="Adoption &amp; incentives" data-sk="Adopcia a motivácia">…</span><span class="grade-chip"></span></label>
     <div class="cap-grid">
       <div class="cap-card" data-v="0"><span class="cap-badge b0">L0</span><span class="cap-text" data-en="Not in place — no practice or awareness in this area." data-sk="Nie je zavedené — žiadna prax ani povedomie v tejto oblasti.">…</span></div>
-      <div class="cap-card" data-v="1"><span class="cap-badge b1">L1</span><span class="cap-text" data-en="Available AI tools are used unevenly; adoption depends on personal enthusiasm." data-sk="Dostupné AI nástroje sa používajú nerovnomerne; adopcia závisí od osobného nadšenia.">…</span></div>
-      <div class="cap-card" data-v="2"><span class="cap-badge b2">L2</span><span class="cap-text" data-en="Adoption is tracked, champions are named, and incentives do not punish honest use (such as disclosing AI assistance)." data-sk="Adopcia sa sleduje, champions sú menovaní a motivačný systém netrestá poctivé použitie (napr. priznanie AI asistencie).">…</span></div>
-      <div class="cap-card" data-v="3"><span class="cap-badge b3">L3</span><span class="cap-text" data-en="Adoption data drives enablement: friction is measured and removed, and the value of usage is visible to users themselves." data-sk="Dáta o adopcii riadia enablement: trenie sa meria a odstraňuje a hodnota používania je viditeľná samotným používateľom.">…</span></div>
+      <div class="cap-card" data-v="1"><span class="cap-badge b1">L1</span><span class="cap-text" data-en="Use is uneven and largely unsanctioned: people rely on personal AI tools (shadow AI) while sanctioned tools see patchy use; nobody knows which." data-sk="Používanie je nerovnomerné a väčšinou neschválené: ľudia sa spoliehajú na osobné AI nástroje (tieňová AI), schválené nástroje sa používajú sporadicky; nikto nevie, ktoré.">…</span></div>
+      <div class="cap-card" data-v="2"><span class="cap-badge b2">L2</span><span class="cap-text" data-en="Sanctioned and shadow use are both visible; champions are named; the value of use is tracked, not only usage rates; incentives do not punish honest use (such as disclosing AI assistance)." data-sk="Schválené aj tieňové používanie je viditeľné; champions sú menovaní; sleduje sa hodnota používania, nielen miera adopcie; stimuly netrestajú úprimné používanie (napr. priznanie AI asistencie).">…</span></div>
+      <div class="cap-card" data-v="3"><span class="cap-badge b3">L3</span><span class="cap-text" data-en="Capacity freed by AI is deliberately redeployed and its value measured; friction is measured and removed; users see the value of their own use." data-sk="Kapacita uvoľnená vďaka AI sa cielene presúva a jej hodnota sa meria; trenie sa meria a odstraňuje; používatelia vidia hodnotu vlastného používania.">…</span></div>
       <div class="cap-card na" data-v="na"><span class="cap-badge bna">N/A</span><span class="cap-text" data-en="Not applicable to the assessed scope." data-sk="Netýka sa hodnoteného rozsahu.">…</span></div>
     </div>
     <div class="prefill-note" contenteditable="true"></div>
@@ -248,7 +263,7 @@
     <div class="cap-grid">
       <div class="cap-card" data-v="0"><span class="cap-badge b0">L0</span><span class="cap-text" data-en="Not in place — no practice or awareness in this area." data-sk="Nie je zavedené — žiadna prax ani povedomie v tejto oblasti.">…</span></div>
       <div class="cap-card" data-v="1"><span class="cap-badge b1">L1</span><span class="cap-text" data-en="People experiment quietly; problems with AI outputs are handled privately or not raised." data-sk="Ľudia experimentujú potichu; problémy s AI výstupmi sa riešia súkromne alebo sa nenahlasujú.">…</span></div>
-      <div class="cap-card" data-v="2"><span class="cap-badge b2">L2</span><span class="cap-text" data-en="Clear reporting paths exist for AI issues and near-misses; raising them carries no penalty." data-sk="Existujú jasné cesty na hlásenie AI problémov a skoro-incidentov; ich nahlásenie nenesie postih.">…</span></div>
+      <div class="cap-card" data-v="2"><span class="cap-badge b2">L2</span><span class="cap-text" data-en="Clear reporting paths exist for AI issues and near-misses; raising them carries no penalty; output-quality norms exist — passing on unchecked AI output (&quot;workslop&quot;) is not acceptable practice." data-sk="Existujú jasné cesty na hlásenie AI problémov a takmer-incidentov; ich nahlásenie sa netrestá; existujú normy kvality výstupov — posúvať ďalej neskontrolovaný AI výstup („workslop“) nie je prijateľná prax.">…</span></div>
       <div class="cap-card" data-v="3"><span class="cap-badge b3">L3</span><span class="cap-text" data-en="Surfacing AI limitations is rewarded and routine; lessons circulate openly and change practice." data-sk="Odhaľovanie limitov AI je odmeňované a rutinné; poučenia kolujú otvorene a menia prax.">…</span></div>
       <div class="cap-card na" data-v="na"><span class="cap-badge bna">N/A</span><span class="cap-text" data-en="Not applicable to the assessed scope." data-sk="Netýka sa hodnoteného rozsahu.">…</span></div>
     </div>
@@ -327,7 +342,7 @@
       <div class="cap-card" data-v="0"><span class="cap-badge b0">L0</span><span class="cap-text" data-en="Not in place — no practice or awareness in this area." data-sk="Nie je zavedené — žiadna prax ani povedomie v tejto oblasti.">…</span></div>
       <div class="cap-card" data-v="1"><span class="cap-badge b1">L1</span><span class="cap-text" data-en="AI tools sit beside the process; usage is optional and outcomes are untracked." data-sk="AI nástroje stoja vedľa procesu; použitie je dobrovoľné a výsledky sa nesledujú.">…</span></div>
       <div class="cap-card" data-v="2"><span class="cap-badge b2">L2</span><span class="cap-text" data-en="AI is embedded in defined process steps with owners; the process description reflects it." data-sk="AI je zabudovaná do definovaných procesných krokov s vlastníkmi; popis procesu to odráža.">…</span></div>
-      <div class="cap-card" data-v="3"><span class="cap-badge b3">L3</span><span class="cap-text" data-en="Process and AI evolve together: process metrics capture AI contribution, and process owners steer further integration." data-sk="Proces a AI sa vyvíjajú spolu: procesné metriky zachytávajú prínos AI a vlastníci procesov riadia ďalšiu integráciu.">…</span></div>
+      <div class="cap-card" data-v="3"><span class="cap-badge b3">L3</span><span class="cap-text" data-en="Processes are redesigned end to end around what AI makes possible — not AI inserted into an unchanged process; process metrics capture AI contribution, and process owners steer further redesign." data-sk="Procesy sú prepracované end-to-end okolo toho, čo AI umožňuje — nie AI vložená do nezmeneného procesu; procesné metriky zachytávajú prínos AI a vlastníci procesov riadia ďalší redizajn.">…</span></div>
       <div class="cap-card na" data-v="na"><span class="cap-badge bna">N/A</span><span class="cap-text" data-en="Not applicable to the assessed scope." data-sk="Netýka sa hodnoteného rozsahu.">…</span></div>
     </div>
     <div class="prefill-note" contenteditable="true"></div>
@@ -376,7 +391,7 @@
 
 <section class="block" id="s-d6">
   <h2><span class="dom-tag">D6</span> <span data-en="Operations &amp; Learning" data-sk="Prevádzka a učenie">…</span></h2>
-  <p class="lead" data-en="NIST grounding: MANAGE (monitoring, third parties, decommissioning) + GOVERN (supply-chain policy)" data-sk="NIST ukotvenie: MANAGE (monitoring, third parties, decommissioning) + GOVERN (supply-chain policy)">…</p>
+  <p class="lead" data-en="NIST grounding: MANAGE 4 (monitoring) + MANAGE 3 / GOVERN 6 (third parties) + GOVERN 1.7 (decommissioning)" data-sk="NIST ukotvenie: MANAGE 4 (monitoring) + MANAGE 3 / GOVERN 6 (tretie strany) + GOVERN 1.7 (vyraďovanie)">…</p>
   <div class="q" data-field="MONITORING_INCIDENTS" data-type="capacity" data-domain="D6">
     <label class="head"><span class="code-chip">MONITORING_INCIDENTS</span><span data-en="Monitoring &amp; incidents" data-sk="Monitoring a incidenty">…</span><span class="grade-chip"></span></label>
     <div class="cap-grid">
@@ -405,7 +420,7 @@
       <div class="cap-card" data-v="0"><span class="cap-badge b0">L0</span><span class="cap-text" data-en="Not in place — no practice or awareness in this area." data-sk="Nie je zavedené — žiadna prax ani povedomie v tejto oblasti.">…</span></div>
       <div class="cap-card" data-v="1"><span class="cap-badge b1">L1</span><span class="cap-text" data-en="What is learned from operating AI stays with the operators." data-sk="Čo sa prevádzka AI naučí, ostáva u operátorov.">…</span></div>
       <div class="cap-card" data-v="2"><span class="cap-badge b2">L2</span><span class="cap-text" data-en="Feedback loops from operation to improvement are defined; retiring underperforming AI is a decision, not an accident." data-sk="Spätné väzby z prevádzky do zlepšovania sú definované; vyradenie nevýkonnej AI je rozhodnutie, nie náhoda.">…</span></div>
-      <div class="cap-card" data-v="3"><span class="cap-badge b3">L3</span><span class="cap-text" data-en="The organization learns as a system: operating evidence reshapes the portfolio, practices, and skills on a rhythm." data-sk="Organizácia sa učí ako systém: prevádzková evidencia v pravidelnom rytme pretvára portfólio, praktiky aj zručnosti.">…</span></div>
+      <div class="cap-card" data-v="3"><span class="cap-badge b3">L3</span><span class="cap-text" data-en="The organization learns as a system: operating evidence reshapes the portfolio, practices, and skills on a rhythm; production systems themselves retain feedback and improve from it." data-sk="Organizácia sa učí ako systém: prevádzková evidencia v pravidelnom rytme pretvára portfólio, praktiky aj zručnosti; aj samotné produkčné systémy si uchovávajú spätnú väzbu a zlepšujú sa z nej.">…</span></div>
       <div class="cap-card na" data-v="na"><span class="cap-badge bna">N/A</span><span class="cap-text" data-en="Not applicable to the assessed scope." data-sk="Netýka sa hodnoteného rozsahu.">…</span></div>
     </div>
     <div class="prefill-note" contenteditable="true"></div>
@@ -413,9 +428,48 @@
   <div class="margin-note" data-note="7"><label data-en="Margin note — D6" data-sk="Margin note — D6">…</label><textarea></textarea></div>
 </section>
 
-<!-- ═══ 8 · RESULTS ═══ -->
+<section class="block" id="s-d7">
+  <h2><span class="dom-tag">D7</span> <span data-en="Agency &amp; Control" data-sk="Agentnosť a kontrola">…</span></h2>
+  <p class="lead" data-en="Rate only where AI acts in systems (action level X2+); otherwise mark the whole domain N/A. NIST grounding: GOVERN 3.2 + MAP 3.5 + MANAGE 2.4; agentic specifics: OWASP Agentic Top 10 (2026)" data-sk="Hodnoťte len tam, kde AI koná v systémoch (úroveň akcie X2+); inak označte celú doménu N/A. NIST ukotvenie: GOVERN 3.2 + MAP 3.5 + MANAGE 2.4; agentné špecifiká: OWASP Agentic Top 10 (2026)">…</p>
+  <div class="q" data-field="AGENT_IDENTITY" data-type="capacity" data-domain="D7">
+    <label class="head"><span class="code-chip">AGENT_IDENTITY</span><span data-en="Agent identity &amp; privilege" data-sk="Identita a oprávnenia agentov">…</span><span class="grade-chip"></span></label>
+    <div class="cap-grid">
+      <div class="cap-card" data-v="0"><span class="cap-badge b0">L0</span><span class="cap-text" data-en="Not in place — no practice or awareness in this area." data-sk="Nie je zavedené — žiadna prax ani povedomie v tejto oblasti.">…</span></div>
+      <div class="cap-card" data-v="1"><span class="cap-badge b1">L1</span><span class="cap-text" data-en="Agents run under shared or personal credentials; their permissions are whatever those credentials allow and grow ad hoc." data-sk="Agenti bežia pod zdieľanými alebo osobnými prihlasovacími údajmi; ich oprávnenia sú také, aké tieto údaje dovoľujú, a rastú ad hoc.">…</span></div>
+      <div class="cap-card" data-v="2"><span class="cap-badge b2">L2</span><span class="cap-text" data-en="Every agent has its own non-human identity, a named owner, and least-privilege permissions per tool and data source, reviewed on a schedule." data-sk="Každý agent má vlastnú ne-ľudskú identitu, menovaného vlastníka a minimálne potrebné oprávnenia per nástroj a zdroj dát, pravidelne revidované.">…</span></div>
+      <div class="cap-card" data-v="3"><span class="cap-badge b3">L3</span><span class="cap-text" data-en="Permissions are scoped per task and time and revoked automatically; non-human identities run through the same lifecycle (provisioning, review, retirement) as human ones." data-sk="Oprávnenia sú ohraničené úlohou a časom a automaticky sa odoberajú; ne-ľudské identity prechádzajú rovnakým životným cyklom (pridelenie, revízia, vyradenie) ako ľudské.">…</span></div>
+      <div class="cap-card na" data-v="na"><span class="cap-badge bna">N/A</span><span class="cap-text" data-en="Not applicable to the assessed scope." data-sk="Netýka sa hodnoteného rozsahu.">…</span></div>
+    </div>
+    <div class="prefill-note" contenteditable="true"></div>
+  </div>
+  <div class="q" data-field="ACTION_BOUNDS" data-type="capacity" data-domain="D7">
+    <label class="head"><span class="code-chip">ACTION_BOUNDS</span><span data-en="Action bounds &amp; interruption" data-sk="Ohraničenie akcií a prerušenie">…</span><span class="grade-chip"></span></label>
+    <div class="cap-grid">
+      <div class="cap-card" data-v="0"><span class="cap-badge b0">L0</span><span class="cap-text" data-en="Not in place — no practice or awareness in this area." data-sk="Nie je zavedené — žiadna prax ani povedomie v tejto oblasti.">…</span></div>
+      <div class="cap-card" data-v="1"><span class="cap-badge b1">L1</span><span class="cap-text" data-en="What an agent may do is defined by its access, not by a decision; there is no tested way to stop it mid-task." data-sk="Čo agent smie, určuje jeho prístup, nie rozhodnutie; neexistuje otestovaný spôsob, ako ho zastaviť uprostred úlohy.">…</span></div>
+      <div class="cap-card" data-v="2"><span class="cap-badge b2">L2</span><span class="cap-text" data-en="Allowed tools and actions are enumerated per agent; irreversible actions require human approval; tripwires and a kill switch exist and have been tested." data-sk="Povolené nástroje a akcie sú vymenované per agent; nevratné akcie vyžadujú schválenie človekom; tripwires a kill switch existujú a boli otestované.">…</span></div>
+      <div class="cap-card" data-v="3"><span class="cap-badge b3">L3</span><span class="cap-text" data-en="Bounds are enforced technically, not by instruction; tripwires are exercised; autonomy is widened only on eval evidence and narrowed after incidents." data-sk="Ohraničenia sú vynútené technicky, nie inštrukciou; tripwires sa cvičia; autonómia sa rozširuje len na základe evalu a po incidentoch sa zužuje.">…</span></div>
+      <div class="cap-card na" data-v="na"><span class="cap-badge bna">N/A</span><span class="cap-text" data-en="Not applicable to the assessed scope." data-sk="Netýka sa hodnoteného rozsahu.">…</span></div>
+    </div>
+    <div class="prefill-note" contenteditable="true"></div>
+  </div>
+  <div class="q" data-field="ACTION_TRACEABILITY" data-type="capacity" data-domain="D7">
+    <label class="head"><span class="code-chip">ACTION_TRACEABILITY</span><span data-en="Action traceability" data-sk="Sledovateľnosť akcií">…</span><span class="grade-chip"></span></label>
+    <div class="cap-grid">
+      <div class="cap-card" data-v="0"><span class="cap-badge b0">L0</span><span class="cap-text" data-en="Not in place — no practice or awareness in this area." data-sk="Nie je zavedené — žiadna prax ani povedomie v tejto oblasti.">…</span></div>
+      <div class="cap-card" data-v="1"><span class="cap-badge b1">L1</span><span class="cap-text" data-en="Agent actions are visible only through their effects in the target systems." data-sk="Akcie agentov sú viditeľné len cez ich dôsledky v cieľových systémoch.">…</span></div>
+      <div class="cap-card" data-v="2"><span class="cap-badge b2">L2</span><span class="cap-text" data-en="Every action is logged with agent identity, inputs, tool calls, and outcome; logs have an owner and support reconstruction of any task." data-sk="Každá akcia sa zaznamenáva s identitou agenta, vstupmi, volaniami nástrojov a výsledkom; záznamy majú vlastníka a umožňujú zrekonštruovať ktorúkoľvek úlohu.">…</span></div>
+      <div class="cap-card" data-v="3"><span class="cap-badge b3">L3</span><span class="cap-text" data-en="Traces feed monitoring and evals; cascading failures across agents are detected; action audits are routine." data-sk="Záznamy napájajú monitoring a evaly; kaskádové zlyhania naprieč agentmi sa detegujú; audity akcií sú rutina.">…</span></div>
+      <div class="cap-card na" data-v="na"><span class="cap-badge bna">N/A</span><span class="cap-text" data-en="Not applicable to the assessed scope." data-sk="Netýka sa hodnoteného rozsahu.">…</span></div>
+    </div>
+    <div class="prefill-note" contenteditable="true"></div>
+  </div>
+  <div class="margin-note" data-note="8"><label data-en="Margin note — D7" data-sk="Margin note — D7">…</label><textarea></textarea></div>
+</section>
+
+<!-- ═══ 9 · RESULTS ═══ -->
 <section class="block" id="s-results">
-  <h2 data-en="8 · Results" data-sk="8 · Výsledky">…</h2>
+  <h2 data-en="9 · Results" data-sk="9 · Výsledky">…</h2>
   <p class="lead" data-en="Per-domain capacity with honest annotations, red flags with catalog IDs (Spec 05), and exports. Scores are Return Equation inputs, never deliverables." data-sk="Kapacita per doména s poctivými anotáciami, red flags s katalógovými ID (Spec 05) a exporty. Skóre sú vstupy Return Equation, nie deliverables.">…</p>
 
   <div class="verdict">
@@ -441,7 +495,7 @@
 
 <script>
 "use strict";
-const ACM = [{"id": "D1", "en": "Direction & Accountability", "sk": "Smerovanie a zodpovednosť", "subs": ["VALUE_OWNERSHIP", "POLICY_GUARDRAILS", "STRATEGY_LINKAGE"]}, {"id": "D2", "en": "People & Adoption", "sk": "Ľudia a adopcia", "subs": ["LITERACY_SKILLS", "ADOPTION_INCENTIVES", "SAFE_USE_CULTURE"]}, {"id": "D3", "en": "Data Readiness", "sk": "Dátová pripravenosť", "subs": ["DATA_ACCESS", "DATA_STEWARDSHIP", "DATA_PROTECTION"]}, {"id": "D4", "en": "Delivery & Integration", "sk": "Doručovanie a integrácia", "subs": ["DEV_PRACTICE", "DEPLOYMENT_RELEASE", "PROCESS_INTEGRATION"]}, {"id": "D5", "en": "Trust & Control", "sk": "Dôvera a kontrola", "subs": ["RISK_IDENTIFICATION", "VALIDATION_TESTING", "TRANSPARENCY_RECOURSE"]}, {"id": "D6", "en": "Operations & Learning", "sk": "Prevádzka a učenie", "subs": ["MONITORING_INCIDENTS", "THIRD_PARTIES", "CONTINUOUS_LEARNING"]}];
+const ACM = [{"id": "D1", "en": "Direction & Accountability", "sk": "Smerovanie a zodpovednosť", "subs": ["VALUE_OWNERSHIP", "POLICY_GUARDRAILS", "STRATEGY_LINKAGE", "CHANGE_LEADERSHIP"]}, {"id": "D2", "en": "People & Adoption", "sk": "Ľudia a adopcia", "subs": ["LITERACY_SKILLS", "ADOPTION_INCENTIVES", "SAFE_USE_CULTURE"]}, {"id": "D3", "en": "Data Readiness", "sk": "Dátová pripravenosť", "subs": ["DATA_ACCESS", "DATA_STEWARDSHIP", "DATA_PROTECTION"]}, {"id": "D4", "en": "Delivery & Integration", "sk": "Doručovanie a integrácia", "subs": ["DEV_PRACTICE", "DEPLOYMENT_RELEASE", "PROCESS_INTEGRATION"]}, {"id": "D5", "en": "Trust & Control", "sk": "Dôvera a kontrola", "subs": ["RISK_IDENTIFICATION", "VALIDATION_TESTING", "TRANSPARENCY_RECOURSE"]}, {"id": "D6", "en": "Operations & Learning", "sk": "Prevádzka a učenie", "subs": ["MONITORING_INCIDENTS", "THIRD_PARTIES", "CONTINUOUS_LEARNING"]}, {"id": "D7", "en": "Agency & Control", "sk": "Agentnosť a kontrola", "subs": ["AGENT_IDENTITY", "ACTION_BOUNDS", "ACTION_TRACEABILITY"]}];
 const LS_KEY = "airoi_capacity_v1";
 const LANG_KEY = "airoi_lang";
 let S = {};
@@ -567,8 +621,14 @@ function redFlags() {
   if (dp.kind === "level" && dp.n <= 1 && (S.REGULATORY_FRAMES || []).includes("privacy"))
     add("RF-12", "Data protection weak under a privacy regime — compliance exposure precedes any new AI initiative.", "Slabá ochrana dát pri privacy režime — compliance expozícia má prednosť pred novými AI iniciatívami.");
   const tr = sub("TRANSPARENCY_RECOURSE"), ri = sub("RISK_IDENTIFICATION");
-  if ((S.REGULATORY_FRAMES || []).includes("ai_regulation") && ((tr.kind === "level" && tr.n <= 1) || (ri.kind === "level" && ri.n <= 1)))
-    add("RF-13", "Trust & Control weak while AI-specific regulation applies.", "Slabá Trust & Control vrstva pri platnej AI regulácii.");
+  const RFR = S.REGULATORY_FRAMES || [];
+  if ((RFR.includes("eu_ai_act_high_risk") || RFR.includes("ai_regulation_other")) && ((tr.kind === "level" && tr.n <= 1) || (ri.kind === "level" && ri.n <= 1)))
+    add("RF-13", "Trust & Control weak while high-risk AI obligations apply.", "Slabá Trust & Control vrstva pri platných povinnostiach pre vysoko rizikovú AI.");
+  const lit = sub("LITERACY_SKILLS");
+  if ((RFR.includes("eu_ai_act_high_risk") || RFR.includes("eu_ai_act_general")) && lit.kind === "level" && lit.n <= 1)
+    add("RF-53", "AI literacy weak while the EU AI Act applies — Art. 4 literacy measures belong in the first horizon.", "Slabá AI gramotnosť pri platnom EU AI Act — opatrenia podľa čl. 4 patria do prvého horizontu.");
+  if ((S.AI_ARCHETYPES || []).includes("agent") && (D("D7") === null || D("D7") < 2 || (D("D5") !== null && D("D5") < 2) || (D("D6") !== null && D("D6") < 2)))
+    add("RF-43", "Agents in use while Agency & Control (D7), Trust & Control (D5) or Operations (D6) is below Established — or D7 not rated.", "Používajú sa agenti, no Agentnosť a kontrola (D7), Dôvera a kontrola (D5) alebo Prevádzka (D6) je pod úrovňou Established — alebo D7 nie je hodnotená.");
   if (D("D6") !== null && D("D6") < 1.5 && S.AI_FOOTPRINT === "organization_wide")
     add("RF-14", "Operations & Learning low with an organization-wide AI footprint — incident exposure.", "Nízka Operations & Learning pri celoorganizačnom AI footprinte — incidentná expozícia.");
   const avgs = per.filter(x => x.avg !== null).map(x => x.avg);
@@ -580,7 +640,7 @@ function redFlags() {
   if (avg !== null && avg < 0.8 && avgs.length >= 4)
     add("RF-16", "Foundational capacity overall — a strategic program is needed, not point fixes.", "Celkovo foundational kapacita — treba strategický program, nie bodové fixy.");
   if (avg !== null && avg >= 2 && S.AI_FOOTPRINT === "none")
-    add("RF-17", "High self-assessed capacity while no AI is in use — the instrument may have measured aspiration.", "Vysoká sebahodnotená kapacita bez používanej AI — instrument možno meral aspiráciu.");
+    add("RF-17", "High self-assessed capacity while no sanctioned AI is in use — the instrument may have measured aspiration. Probe shadow AI separately.", "Vysoká sebahodnotená kapacita bez schválenej AI v používaní — instrument možno meral aspiráciu. Tieňovú AI preverte zvlášť.");
   ACM.forEach(d => {
     const lv = d.subs.map(code => classify(S[code])).filter(c => c.kind === "level").map(c => c.n);
     if (lv.length >= 2 && Math.max(...lv) === 3 && Math.min(...lv) === 0)
@@ -649,7 +709,7 @@ function buildEnvelope() {
     if (META.notes[code]) f.note = META.notes[code];
     if (Object.keys(f).length) fields[code] = f;
   });
-  return { _meta: { schema_version: 1, instrument: "capacity-assessment", model: "ACM-0.1", generated: new Date().toISOString(), margins: META.margins }, fields };
+  return { _meta: { schema_version: 1, instrument: "capacity-assessment", model: "ACM-0.2", generated: new Date().toISOString(), margins: META.margins }, fields };
 }
 function dl(name, text, mime) {
   const b = new Blob([text], { type: mime }), u = URL.createObjectURL(b), a = document.createElement("a");

@@ -131,11 +131,14 @@ Each principle is specified as: **statement → rationale → in practice → an
 - The co-analyst runs parallel research streams in *Sense* and drafts the mechanical report sections in *Synthesis* (scoring aggregation, sizing tables, implementation options).
 - The Lead Advisor reviews all co-analyst output and owns every claim in the Decision Report.
 - Co-analyst capability is defined functionally (research, prefill, parallel drafting, consistency) — never as a specific product.
+- The co-analyst runs under explicit operating rules — confidentiality of client data, human verification of sources before Grade A/B, provenance of drafted parts, disclosure to the client (Spec 02 §1).
+- The claim that the pattern buys depth without extra time is a hypothesis to measure, not a felt speed-up (Spec 00 §1.3).
 
 **Anti-patterns.**
 - *Autopilot advisory* — shipping co-analyst output without advisor judgment.
 - *Hidden machine* — using AI assistance while presenting the work as purely human (the lane is formal and disclosed).
 - *Tool lock-in* — specifying the co-analyst as a particular vendor's product inside the framework.
+- *Laundered citations* — co-analyst-found sources entering the dossier at Grade A/B without a human having opened them.
 
 ---
 

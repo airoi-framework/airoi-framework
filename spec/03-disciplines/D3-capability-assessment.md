@@ -21,9 +21,11 @@ Measure what the organization can actually absorb — at two zoom levels: the or
 
 ### Lens 1 — Organizational AI capacity (the AIROI Capacity Model)
 
-The **AIROI Capacity Model (ACM)** — original AIROI work grounded in the NIST AI Risk Management Framework (public domain) — measures organizational AI capacity across **6 domains × 3 sub-capacities**. Full model definition, level statements, and NIST crosswalk: [ACM-capacity-model.md](ACM-capacity-model.md).
+The **AIROI Capacity Model (ACM)** — original AIROI work grounded in the NIST AI Risk Management Framework (public domain) — measures organizational AI capacity across **7 domains and 22 sub-capacities**. Full model definition, level statements, and NIST crosswalk: [ACM-capacity-model.md](ACM-capacity-model.md).
 
-**Domains:** Direction & Accountability · People & Adoption · Data Readiness · Delivery & Integration · Trust & Control · Operations & Learning.
+**Domains:** Direction & Accountability · People & Adoption · Data Readiness · Delivery & Integration · Trust & Control · Operations & Learning · Agency & Control (rated only where AI acts in systems — action level X2+; otherwise N/A).
+
+**Organization vs. opportunity.** ACM describes the organization; Fit is judged per opportunity (Spec 00 §4). Data readiness in particular is use-case specific — an organization can be ready for one opportunity's data and not another's — so D4 checks each candidate's data requirement against the process record (lens 2), not against the D3 domain average.
 
 **Rating scale per sub-capacity** (statement-pick — the respondent selects the level *description* that matches reality):
 

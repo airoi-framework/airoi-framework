@@ -9,11 +9,13 @@
 
 The AIROI Capacity Model (ACM) is the framework's original instrument model for measuring **organizational AI capacity** — the Capacity component of Fit in the Return Equation (Spec 00 §4). It is used by discipline D3 (Capability Assessment, lens 1).
 
-The ACM is **original AIROI work grounded in the NIST AI Risk Management Framework (AI RMF 1.0)** — a U.S. public-domain publication. Grounding means: the ACM's coverage is cross-walked to the AI RMF functions and trustworthiness characteristics so that an ACM assessment supports AI RMF-aligned conversations; the domains, sub-capacities, and every level statement are authored for AIROI's value-first purpose.
+The ACM is **original AIROI work grounded in the NIST AI Risk Management Framework (AI RMF 1.0)** and its **Generative AI Profile (NIST AI 600-1)** — U.S. public-domain publications. Grounding means: the ACM's coverage is cross-walked to the AI RMF functions and trustworthiness characteristics so that an ACM assessment supports AI RMF-aligned conversations; the domains, sub-capacities, and every level statement are authored for AIROI's value-first purpose.
+
+AI RMF 1.0 predates AI that *acts*. Domain D7 (Agency & Control) is therefore grounded additionally in public agentic-AI references — the OWASP Top 10 for Agentic Applications (2026) and Singapore's Model AI Governance Framework for Agentic AI (2026) — and tracks the NIST CAISI AI Agent Standards Initiative (2026) for future alignment. See [ATTRIBUTIONS.md](../../ATTRIBUTIONS.md).
 
 ## 1. Model shape
 
-**6 domains × 3 sub-capacities = 18 measurements.** Each sub-capacity is rated by picking the *statement* that best matches reality (statement-pick beats number-pick — it resists self-scoring flattery):
+**7 domains, 22 sub-capacities = 22 measurements** (D1 carries four; every other domain three). Each sub-capacity is rated by picking the *statement* that best matches reality (statement-pick beats number-pick — it resists self-scoring flattery):
 
 | Level | Name | Meaning | Scoring |
 |---|---|---|---|
@@ -26,16 +28,19 @@ The ACM is **original AIROI work grounded in the NIST AI Risk Management Framewo
 
 The L0 / N/A / skip distinction is load-bearing (see D3): a missing capacity, an out-of-scope capacity, and an unassessed capacity are three different facts.
 
+**D7 scoping.** Domain D7 (Agency & Control) is rated N/A as a whole only when no opportunity in scope — deployed or candidate — has an action level of X2 or higher (D4 §3). Once any such opportunity exists, D7 must be assessed; an N/A on D7 next to an X2+ opportunity is itself a finding (RF-43).
+
 ## 2. Domains
 
 | # | Domain | Asks | AIROI dimension | NIST AI RMF grounding |
 |---|---|---|---|---|
-| D1 | **Direction & Accountability** | who owns AI value and risk, and does strategy steer it? | People & Judgment | GOVERN (policies, accountability, oversight) |
-| D2 | **People & Adoption** | can the people carry the change — skills, adoption, honesty? | People & Judgment | GOVERN (culture, workforce) + MANAGE (human oversight) |
+| D1 | **Direction & Accountability** | who owns AI value and risk, does strategy steer it, and can leadership land change? | People & Judgment | GOVERN 1–2 (policies, accountability) + GOVERN 4 (culture of risk communication) |
+| D2 | **People & Adoption** | can the people carry the change — skills, AI literacy, adoption, honesty? | People & Judgment | GOVERN 2–3 (workforce, roles in human–AI configurations, GOVERN 3.2) + MAP 3.5 (human oversight processes) |
 | D3 | **Data Readiness** | will the data feed what the ambition orders? | Evidence & Data | MAP (context, data) + MEASURE (privacy-enhanced) |
 | D4 | **Delivery & Integration** | can ideas reach production and live inside processes? | Processes & Value Streams · Technology & Partners | MAP (system context) + MANAGE (deployment) |
 | D5 | **Trust & Control** | are stakes known, outputs validated, and people protected? | cross-cutting | MAP (risk identification) + MEASURE (trustworthiness evaluation) |
-| D6 | **Operations & Learning** | does production AI stay healthy, and does the organization learn? | Technology & Partners | MANAGE (monitoring, third parties, decommissioning) + GOVERN (supply-chain policy) |
+| D6 | **Operations & Learning** | does production AI stay healthy, and does the organization learn? | Technology & Partners | MANAGE 4 (post-deployment monitoring) + MANAGE 3 and GOVERN 6 (third parties) + GOVERN 1.7 (decommissioning) |
+| D7 | **Agency & Control** | when AI acts in systems, is every agent identified, bounded, traceable, and stoppable? | Technology & Partners · cross-cutting | GOVERN 3.2 + MAP 3.5 (human oversight of autonomy) + MANAGE 2.4 (supersede, disengage, deactivate); agentic specifics beyond AI RMF 1.0 — OWASP Agentic Top 10 (2026), Singapore agentic MGF (2026) |
 
 ## 3. Sub-capacities and level statements
 
@@ -71,6 +76,14 @@ Level statements are the instrument's answer cards. L0 and N/A are uniform acros
 | **L2 Established** | Every funded AI initiative names the business goal it serves and its expected contribution; a portfolio view exists. |
 | **L3 Embedded** | The AI portfolio is steered by realized contribution: funding follows measured value, and misaligned initiatives are stopped. |
 
+#### CHANGE_LEADERSHIP · Change leadership & track record
+
+| Level | Statement |
+|---|---|
+| **L1 Emerging** | Change rests on individual sponsors; results of past change initiatives are not reviewed; managers are left to explain AI-driven change to their teams on their own. |
+| **L2 Established** | A coalition of aligned leaders — not a single sponsor — backs AI change; past change initiatives are reviewed honestly; managers are equipped to lead AI-changed work with their teams. |
+| **L3 Embedded** | The organization has a measured record of landing change; teams, not only managers, rate manager-led AI conversations as useful, and the trust gap between leadership and frontline is tracked and closing. |
+
 
 ### D2 — People & Adoption
 
@@ -78,24 +91,24 @@ Level statements are the instrument's answer cards. L0 and N/A are uniform acros
 
 | Level | Statement |
 |---|---|
-| **L1 Emerging** | AI competence is concentrated in a few self-taught individuals. |
-| **L2 Established** | Role-appropriate AI training exists, and required skill profiles are defined for affected roles. |
+| **L1 Emerging** | AI competence is concentrated in a few self-taught individuals; no one is accountable for AI literacy. |
+| **L2 Established** | Role-appropriate AI literacy measures cover staff and others operating AI on the organization's behalf (cf. EU AI Act Art. 4); skill profiles for affected roles include supervising and checking AI work, and managers are trained to lead it. |
 | **L3 Embedded** | Skills are measured and renewed continuously; competence development anticipates upcoming AI use rather than trailing it. |
 
 #### ADOPTION_INCENTIVES · Adoption & incentives
 
 | Level | Statement |
 |---|---|
-| **L1 Emerging** | Available AI tools are used unevenly; adoption depends on personal enthusiasm. |
-| **L2 Established** | Adoption is tracked, champions are named, and incentives do not punish honest use (such as disclosing AI assistance). |
-| **L3 Embedded** | Adoption data drives enablement: friction is measured and removed, and the value of usage is visible to users themselves. |
+| **L1 Emerging** | Use is uneven and largely unsanctioned: people rely on personal AI tools (shadow AI) while sanctioned tools see patchy use; nobody knows which. |
+| **L2 Established** | Sanctioned and shadow use are both visible; champions are named; the *value* of use is tracked, not only usage rates; incentives do not punish honest use (such as disclosing AI assistance). |
+| **L3 Embedded** | Capacity freed by AI is deliberately redeployed and its value measured; friction is measured and removed; users see the value of their own use. |
 
 #### SAFE_USE_CULTURE · Safe-use culture
 
 | Level | Statement |
 |---|---|
 | **L1 Emerging** | People experiment quietly; problems with AI outputs are handled privately or not raised. |
-| **L2 Established** | Clear reporting paths exist for AI issues and near-misses; raising them carries no penalty. |
+| **L2 Established** | Clear reporting paths exist for AI issues and near-misses; raising them carries no penalty; output-quality norms exist — passing on unchecked AI output ("workslop") is not acceptable practice. |
 | **L3 Embedded** | Surfacing AI limitations is rewarded and routine; lessons circulate openly and change practice. |
 
 
@@ -150,7 +163,7 @@ Level statements are the instrument's answer cards. L0 and N/A are uniform acros
 |---|---|
 | **L1 Emerging** | AI tools sit beside the process; usage is optional and outcomes are untracked. |
 | **L2 Established** | AI is embedded in defined process steps with owners; the process description reflects it. |
-| **L3 Embedded** | Process and AI evolve together: process metrics capture AI contribution, and process owners steer further integration. |
+| **L3 Embedded** | Processes are redesigned end to end around what AI makes possible — not AI inserted into an unchanged process; process metrics capture AI contribution, and process owners steer further redesign. |
 
 
 ### D5 — Trust & Control
@@ -204,7 +217,36 @@ Level statements are the instrument's answer cards. L0 and N/A are uniform acros
 |---|---|
 | **L1 Emerging** | What is learned from operating AI stays with the operators. |
 | **L2 Established** | Feedback loops from operation to improvement are defined; retiring underperforming AI is a decision, not an accident. |
-| **L3 Embedded** | The organization learns as a system: operating evidence reshapes the portfolio, practices, and skills on a rhythm. |
+| **L3 Embedded** | The organization learns as a system: operating evidence reshapes the portfolio, practices, and skills on a rhythm; production systems themselves retain feedback and improve from it. |
+
+
+### D7 — Agency & Control
+
+Rated only where AI acts in systems (action level X2+, D4 §3); otherwise N/A as a whole (§1).
+
+#### AGENT_IDENTITY · Agent identity & privilege
+
+| Level | Statement |
+|---|---|
+| **L1 Emerging** | Agents run under shared or personal credentials; their permissions are whatever those credentials allow and grow ad hoc. |
+| **L2 Established** | Every agent has its own non-human identity, a named owner, and least-privilege permissions per tool and data source, reviewed on a schedule. |
+| **L3 Embedded** | Permissions are scoped per task and time and revoked automatically; non-human identities run through the same lifecycle (provisioning, review, retirement) as human ones. |
+
+#### ACTION_BOUNDS · Action bounds & interruption
+
+| Level | Statement |
+|---|---|
+| **L1 Emerging** | What an agent may do is defined by its access, not by a decision; there is no tested way to stop it mid-task. |
+| **L2 Established** | Allowed tools and actions are enumerated per agent; irreversible actions require human approval; tripwires and a kill switch exist and have been tested. |
+| **L3 Embedded** | Bounds are enforced technically, not by instruction; tripwires are exercised; autonomy is widened only on eval evidence and narrowed after incidents. |
+
+#### ACTION_TRACEABILITY · Action traceability
+
+| Level | Statement |
+|---|---|
+| **L1 Emerging** | Agent actions are visible only through their effects in the target systems. |
+| **L2 Established** | Every action is logged with agent identity, inputs, tool calls, and outcome; logs have an owner and support reconstruction of any task. |
+| **L3 Embedded** | Traces feed monitoring and evals; cascading failures across agents are detected; action audits are routine. |
 
 ## 4. Trustworthiness crosswalk
 
@@ -214,8 +256,8 @@ How the NIST AI RMF trustworthiness characteristics are covered:
 |---|---|
 | Valid & reliable | VALIDATION_TESTING · MONITORING_INCIDENTS |
 | Safe | RISK_IDENTIFICATION · VALIDATION_TESTING |
-| Secure & resilient | RISK_IDENTIFICATION · MONITORING_INCIDENTS · THIRD_PARTIES |
-| Accountable & transparent | VALUE_OWNERSHIP · TRANSPARENCY_RECOURSE |
+| Secure & resilient | RISK_IDENTIFICATION · MONITORING_INCIDENTS · THIRD_PARTIES · AGENT_IDENTITY · ACTION_BOUNDS |
+| Accountable & transparent | VALUE_OWNERSHIP · TRANSPARENCY_RECOURSE · ACTION_TRACEABILITY |
 | Explainable & interpretable | TRANSPARENCY_RECOURSE |
 | Privacy-enhanced | DATA_PROTECTION |
 | Fair — harmful bias managed | VALIDATION_TESTING · SAFE_USE_CULTURE |
@@ -225,7 +267,8 @@ How the NIST AI RMF trustworthiness characteristics are covered:
 - Per-domain average over answered sub-capacities (L0 included as 0; N/A and skips excluded), overall average across domains with data.
 - Scores are **Measurement-system outputs** (Blueprint §4.7): inputs to the Return Equation, never deliverables.
 - Presentation must annotate L0/N-A/skip counts inline — an unannotated score overstates capacity.
-- Cross-checks fire per the Red-Flag Catalog (Spec 05): RF-10…RF-20 map onto ACM domains (e.g. RF-10 Delivery & Integration ahead of Direction & Accountability; RF-11 Delivery ahead of VALIDATION_TESTING; RF-12 DATA_PROTECTION low under a privacy regime).
+- Cross-checks fire per the Red-Flag Catalog (Spec 05): RF-10…RF-20 map onto ACM domains (e.g. RF-10 Delivery & Integration ahead of Direction & Accountability; RF-11 Delivery ahead of VALIDATION_TESTING; RF-12 DATA_PROTECTION low under a privacy regime). RF-43…RF-46 bind D5–D7 to opportunities that act (action level X2+).
+- **Organization vs. opportunity.** ACM scores describe the organization. Fit is judged per opportunity (Spec 00 §4): the prerequisites an opportunity's rung and action level require (D5) are checked against the domains *that opportunity depends on*, and data readiness against *its* data requirement (D4) — an organization-wide average never substitutes for that check.
 
 ## 6. Reference implementation
 

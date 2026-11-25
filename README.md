@@ -16,10 +16,10 @@ At the top of the framework sits the **AI Value System (AVS)**: signals and dema
 Sense → Align → Assess → Shape → Decide → Realize → Recalibrate ↺
 ```
 
-Two ideas make the mythology bite:
+Two ideas make the methodology bite:
 
-- **The chain doesn't close at the report — it closes at the realized return.** *Realize* belongs to the client; the framework prepares it (roadmap with owners, decision tree) and measures it (*Recalibrate*).
-- **Return = Potential × Fit** (where Fit = ambition × capacity). High potential without fit is shelfware; fit without potential is busywork. That's why ambition calibration always precedes opportunity discovery — and why a maturity **score is an output, never the outcome**.
+- **The chain doesn't close at the report — it closes at the realized return.** *Realize* belongs to the client; the framework prepares it (decisions with owners, Acceptance Cards with measured baselines and kill criteria, an AI Register) and measures it (*Recalibrate*).
+- **Return = Potential × Fit**, judged per opportunity — where Fit is how well the opportunity matches the organization's Ambition Vector times the capacity to absorb *that* change. The vector is a distribution, never a multiplier. High potential without fit is shelfware; fit without potential is busywork. That's why ambition calibration always precedes opportunity discovery — and why a maturity **score is an output, never the outcome**.
 
 Every discipline looks at the organization through **four dimensions**: People & Judgment · Evidence & Data · Processes & Value Streams · Technology & Partners.
 
@@ -31,8 +31,8 @@ Five disciplines:
 
 - **D1 · Evidence & Hypotheses** — pre-engagement research from public sources; every claim carries an evidence grade (`A/B/C/X`) and must be falsifiable
 - **D2 · Ambition Calibration** — the Ambition Vector (**Sustain / Scale / Shift**, 100 points) with sector baselines, evidence-tier weighting (capital allocation > strategic behavior > language), and realism rules
-- **D3 · Capability Assessment** — organizational AI capacity via the original **AIROI Capacity Model** (6 domains × 3 sub-capacities, grounded in the public-domain [NIST AI RMF](https://www.nist.gov/itl/ai-risk-management-framework)) plus process-level deep-dives grounded in the [APQC Process Classification Framework](https://www.apqc.org/process-frameworks) (referenced as the external original, not repackaged)
-- **D4 · Opportunity Discovery** — AI opportunities traced to specific pain in specific process steps with specific owners
+- **D3 · Capability Assessment** — organizational AI capacity via the original **AIROI Capacity Model** (7 domains, 22 sub-capacities — including Agency & Control for AI that acts — grounded in the public-domain [NIST AI RMF](https://www.nist.gov/itl/ai-risk-management-framework)) plus process-level deep-dives grounded in the [APQC Process Classification Framework](https://www.apqc.org/process-frameworks) (referenced as the external original, not repackaged)
+- **D4 · Opportunity Discovery** — AI opportunities traced to specific pain in specific process steps with specific owners, each classified by stakes, **action level** (inform → draft → act with approval → act within bounds), and oversight
 - **D5 · Decision Enablement** — red-flag consistency verification, advisor ∥ AI co-analyst parallel drafting, gradient-structured decision reports
 
 ## Where value leaks — and how the system seals it
@@ -59,16 +59,16 @@ Between an organization's AI ambition and a realized return, value leaks at four
 | [spec/02-lifecycle.md](spec/02-lifecycle.md) | **Spec 02 — Lifecycle** — stages, actors, quality gates, feedback loops, refusal conditions |
 | [spec/03-disciplines/](spec/03-disciplines/) | **Spec 03 — Disciplines D1–D5** — Evidence & Hypotheses · Ambition Calibration · Capability Assessment · Opportunity Discovery · Decision Enablement |
 | [spec/04-data-standard.md](spec/04-data-standard.md) | **Spec 04 — Data Standard** — JSON envelope, field types, Evidence Grades, rationale contract, margin notes, un-bias enforcement |
-| [spec/05-red-flag-catalog.md](spec/05-red-flag-catalog.md) | **Spec 05 — Red-Flag Catalog** — 30 declarative cross-check rules (RF-01…RF-30) |
+| [spec/05-red-flag-catalog.md](spec/05-red-flag-catalog.md) | **Spec 05 — Red-Flag Catalog** — 57 declarative cross-check rules (RF-01…RF-57) |
 | [spec/06-artifacts.md](spec/06-artifacts.md) | **Spec 06 — Artifacts** — artifact register, definitions, quality criteria, minimum sets per tier |
 | [spec/07-adoption.md](spec/07-adoption.md) | **Spec 07 — Adoption** — tiers as return-confidence, client commitments, conformance rules |
 | [spec/08-glossary.md](spec/08-glossary.md) | **Spec 08 — Glossary** — canonical definitions |
 | [ATTRIBUTIONS.md](ATTRIBUTIONS.md) | Licensing map for adapted and referenced external works |
 | [LICENSE.md](LICENSE.md) | CC-BY-SA 4.0 |
 | [CHANGELOG.md](CHANGELOG.md) | Version history |
-| [spec/03-disciplines/ACM-capacity-model.md](spec/03-disciplines/ACM-capacity-model.md) | **The AIROI Capacity Model (ACM)** — original 6-domain organizational AI capacity model with 54 level statements and a NIST AI RMF crosswalk |
+| [spec/03-disciplines/ACM-capacity-model.md](spec/03-disciplines/ACM-capacity-model.md) | **The AIROI Capacity Model (ACM)** — original 7-domain organizational AI capacity model with 66 level statements and a NIST AI RMF crosswalk |
 | [reference-implementations/ambition-calibration.html](reference-implementations/ambition-calibration.html) | **Ambition Calibration instrument** (D2) — linked-slider Ambition Vector, advisor/respondent modes, envelope import/export, red flags with RF-IDs |
-| [reference-implementations/capacity-assessment.html](reference-implementations/capacity-assessment.html) | **Capacity Assessment instrument** (D3/ACM) — statement-pick capacity cards, honest L0/N-A/skip scoring, red flags RF-10…RF-20 |
+| [reference-implementations/capacity-assessment.html](reference-implementations/capacity-assessment.html) | **Capacity Assessment instrument** (D3/ACM) — statement-pick capacity cards across 7 domains, honest L0/N-A/skip scoring, red flags RF-10…RF-20, RF-43, RF-53 |
 | `reference-implementations/` | *(coming)* Process deep-dive instrument |
 | `translations/` | *(coming)* Slovak and other language derivatives |
 

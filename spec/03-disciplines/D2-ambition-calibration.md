@@ -9,7 +9,7 @@
 
 Establish how much change the organization wants — honestly, with evidence, and with leadership's explicit sign-off — before any solution is designed.
 
-**Chain activity:** Align · **Return Equation contribution:** calibrates **Fit** (the Ambition component) — the most expensive variable to get wrong (P4).
+**Chain activity:** Align · **Return Equation contribution:** calibrates the Ambition input to **Fit** — the reference every opportunity's ambition match is judged against (Spec 00 §4.1, D4 §4) and the shape the portfolio should follow. The vector is a distribution, never a multiplier.
 
 ## Core question
 
@@ -48,7 +48,7 @@ Start from the sector baseline in the practitioner's calibration assets. Illustr
 | Public sector | 80 / 18 / 2 |
 | Professional services | 55 / 35 / 10 |
 
-Baselines are priors; real signals override them. A practitioner's own recalibrated baselines (Spec 00 §7) supersede these defaults.
+Baselines are priors; real signals override them. A practitioner's own recalibrated baselines (Spec 00 §7) supersede these defaults. **The defaults above have no published source** — they are illustrative, carry Grade C, and are a framework hypothesis to be replaced by recalibrated values (Spec 00 §1.3).
 
 ### 2. Evidence adjustment
 
